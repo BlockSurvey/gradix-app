@@ -849,10 +849,24 @@ export default function UploadDataPage() {
                               <div className="flex items-center justify-between mb-6">
                                 <div className="flex items-center gap-6">
                                   <div className="bg-[#eeeeee] p-1 rounded-2xl flex border-[0.6px] border-[rgba(0,0,0,0.8)]">
-                                    <button className="bg-white px-4 py-2 rounded-xl shadow-[0px_0px_10px_1px_rgba(0,0,0,0.15)] text-base font-medium text-black border border-[rgba(0,0,0,0.1)]">
+                                    <button 
+                                      onClick={() => setActiveTab('logs')}
+                                      className={`px-4 py-2 rounded-xl text-base font-medium transition-colors ${
+                                        activeTab === 'logs' 
+                                          ? 'bg-white text-black shadow-[0px_0px_10px_1px_rgba(0,0,0,0.15)] border border-[rgba(0,0,0,0.1)]'
+                                          : 'text-[rgba(0,0,0,0.7)] hover:bg-gray-100'
+                                      }`}
+                                    >
                                       All Evaluation Results
                                     </button>
-                                    <button className="px-4 py-2 rounded-xl text-base text-[rgba(0,0,0,0.7)] hover:bg-gray-100 transition-colors font-medium">
+                                    <button 
+                                      onClick={() => setActiveTab('analytics')}
+                                      className={`px-4 py-2 rounded-xl text-base font-medium transition-colors ${
+                                        activeTab === 'analytics' 
+                                          ? 'bg-white text-black shadow-[0px_0px_10px_1px_rgba(0,0,0,0.15)] border border-[rgba(0,0,0,0.1)]'
+                                          : 'text-[rgba(0,0,0,0.7)] hover:bg-gray-100'
+                                      }`}
+                                    >
                                       Analytics
                                     </button>
                                   </div>
@@ -939,12 +953,138 @@ export default function UploadDataPage() {
                                 </div>
                               </div>
 
-                              <h3 className="text-xl font-normal text-black mb-4">Results (20)</h3>
+                              {activeTab === 'logs' && <h3 className="text-xl font-normal text-black mb-4">Results (20)</h3>}
                             </div>
 
+                            {/* Analytics Content */}
+                            {activeTab === 'analytics' && (
+                              <div className="px-6 pb-6">
+                                {/* Charts Section */}
+                                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                                  {/* Score Distribution Chart */}
+                                  <div className="bg-white border-[0.8px] border-[rgba(0,0,0,0.2)] rounded-[10px] p-6">
+                                    <h3 className="text-xl font-medium text-black mb-6">Score Distribution</h3>
+                                    
+                                    {/* Chart Container */}
+                                    <div className="relative">
+                                      {/* Y-axis labels */}
+                                      <div className="absolute left-0 h-64 flex flex-col justify-between text-sm text-[rgba(0,0,0,0.8)] py-2">
+                                        <span>60</span>
+                                        <span>45</span>
+                                        <span>30</span>
+                                        <span>15</span>
+                                        <span>0</span>
+                                      </div>
+                                      
+                                      {/* Chart area */}
+                                      <div className="ml-8 relative">
+                                        {/* Grid lines */}
+                                        <div className="absolute inset-0 flex flex-col justify-between">
+                                          {[...Array(5)].map((_, i) => (
+                                            <div key={i} className="border-t border-gray-200"></div>
+                                          ))}
+                                        </div>
+                                        
+                                        {/* Bars */}
+                                        <div className="flex items-end justify-between h-64 px-4">
+                                          <div className="flex flex-col items-center">
+                                            <div className="bg-emerald-500 w-12 rounded-t-lg mb-2" style={{ height: '53px' }}></div>
+                                            <span className="text-sm text-[rgba(0,0,0,0.8)] transform -rotate-0">90-100</span>
+                                          </div>
+                                          <div className="flex flex-col items-center">
+                                            <div className="bg-emerald-500 w-12 rounded-t-lg mb-2" style={{ height: '86px' }}></div>
+                                            <span className="text-sm text-[rgba(0,0,0,0.8)] transform -rotate-0">80-89</span>
+                                          </div>
+                                          <div className="flex flex-col items-center">
+                                            <div className="bg-emerald-500 w-12 rounded-t-lg mb-2" style={{ height: '229px' }}></div>
+                                            <span className="text-sm text-[rgba(0,0,0,0.8)] transform -rotate-0">70-79</span>
+                                          </div>
+                                          <div className="flex flex-col items-center">
+                                            <div className="bg-emerald-500 w-12 rounded-t-lg mb-2" style={{ height: '32px' }}></div>
+                                            <span className="text-sm text-[rgba(0,0,0,0.8)] transform -rotate-0">60-69</span>
+                                          </div>
+                                          <div className="flex flex-col items-center">
+                                            <div className="bg-emerald-500 w-12 rounded-t-lg mb-2" style={{ height: '16px' }}></div>
+                                            <span className="text-sm text-[rgba(0,0,0,0.8)] transform -rotate-0">50-59</span>
+                                          </div>
+                                          <div className="flex flex-col items-center">
+                                            <div className="bg-emerald-500 w-12 rounded-t-lg mb-2" style={{ height: '8px' }}></div>
+                                            <span className="text-sm text-[rgba(0,0,0,0.8)] transform -rotate-0">40-49</span>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+
+                                  {/* Average Performance by Criteria */}
+                                  <div className="bg-white border-[0.8px] border-[rgba(0,0,0,0.2)] rounded-[10px] p-6">
+                                    <h3 className="text-xl font-medium text-black mb-6">Average Performance by Criteria</h3>
+                                    
+                                    <div className="space-y-4">
+                                      {/* Technical Skills */}
+                                      <div className="flex items-center justify-between">
+                                        <span className="text-sm text-black font-medium w-32">Technical Skills</span>
+                                        <div className="flex-1 mx-4">
+                                          <div className="bg-gray-200 h-3 rounded">
+                                            <div className="bg-blue-500 h-3 rounded" style={{ width: '84.3%' }}></div>
+                                          </div>
+                                        </div>
+                                        <span className="text-sm text-black w-16 text-right">84.3% avg</span>
+                                      </div>
+                                      
+                                      {/* Communication */}
+                                      <div className="flex items-center justify-between">
+                                        <span className="text-sm text-black font-medium w-32">Communication</span>
+                                        <div className="flex-1 mx-4">
+                                          <div className="bg-gray-200 h-3 rounded">
+                                            <div className="bg-blue-500 h-3 rounded" style={{ width: '86.2%' }}></div>
+                                          </div>
+                                        </div>
+                                        <span className="text-sm text-black w-16 text-right">86.2% avg</span>
+                                      </div>
+                                      
+                                      {/* Academic Performance */}
+                                      <div className="flex items-center justify-between">
+                                        <span className="text-sm text-black font-medium w-32">Academic Performance</span>
+                                        <div className="flex-1 mx-4">
+                                          <div className="bg-gray-200 h-3 rounded">
+                                            <div className="bg-blue-500 h-3 rounded" style={{ width: '83.1%' }}></div>
+                                          </div>
+                                        </div>
+                                        <span className="text-sm text-black w-16 text-right">83.1% avg</span>
+                                      </div>
+                                      
+                                      {/* Work Experience */}
+                                      <div className="flex items-center justify-between">
+                                        <span className="text-sm text-black font-medium w-32">Work Experience</span>
+                                        <div className="flex-1 mx-4">
+                                          <div className="bg-gray-200 h-3 rounded">
+                                            <div className="bg-blue-500 h-3 rounded" style={{ width: '84.4%' }}></div>
+                                          </div>
+                                        </div>
+                                        <span className="text-sm text-black w-16 text-right">84.4% avg</span>
+                                      </div>
+                                      
+                                      {/* Cultural Fit */}
+                                      <div className="flex items-center justify-between">
+                                        <span className="text-sm text-black font-medium w-32">Cultural Fit</span>
+                                        <div className="flex-1 mx-4">
+                                          <div className="bg-gray-200 h-3 rounded">
+                                            <div className="bg-blue-500 h-3 rounded" style={{ width: '85.0%' }}></div>
+                                          </div>
+                                        </div>
+                                        <span className="text-sm text-black w-16 text-right">85.0% avg</span>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            )}
+
                             {/* Results List */}
-                            <div className="px-6 pb-6 space-y-3">
-                              {/* Result Entry 1 - Sanjana Mehta */}
+                            {activeTab === 'logs' && (
+                              <div className="px-6 pb-6 space-y-3">
+                                {/* Result Entry 1 - Sanjana Mehta */}
                               <div 
                                 className="bg-white border-[0.4px] border-[rgba(0,0,0,0.4)] rounded-lg p-4 cursor-pointer hover:shadow-md transition-shadow"
                                 onClick={() => handleResultClick('Sanjana Mehta')}
@@ -1096,6 +1236,8 @@ export default function UploadDataPage() {
                                   </div>
                                 </div>
                               </div>
+                              </div>
+                            )}
                             </div>
                           </div>
                         </div>
