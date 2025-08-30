@@ -82,14 +82,14 @@ interface SidebarItemProps {
 const SidebarItem = ({ icon, label, isActive = false, onClick }: SidebarItemProps) => (
   <button
     onClick={onClick}
-    className={`flex items-center gap-2 lg:gap-3 w-full px-3 lg:px-6 py-2 lg:py-3 rounded-lg text-left transition-colors ${
+    className={`flex items-center gap-2 lg:gap-3 w-full px-3 lg:px-4 py-2 lg:py-2.5 rounded-lg text-left transition-colors ${
       isActive 
         ? 'bg-[rgba(179,173,173,0.4)] text-gray-700' 
         : 'text-gray-700 hover:bg-gray-200'
     }`}
   >
     {icon}
-    <span className="font-medium text-sm lg:text-base">{label}</span>
+    <span className="font-medium text-sm lg:text-sm">{label}</span>
   </button>
 );
 
@@ -454,9 +454,9 @@ export default function UploadDataPage() {
       <div className="min-h-screen bg-[#f9f9f9]">
         <div className="flex flex-col lg:flex-row">
           {/* Sidebar */}
-          <div className="w-full lg:w-72 bg-[#efeded] border-r border-gray-400 lg:min-h-screen">
+          <div className="w-full lg:w-56 bg-[#efeded] border-r border-gray-400 lg:min-h-screen">
             {/* Header */}
-            <div className="p-4 lg:p-8 border-b border-gray-400">
+            <div className="p-4 lg:p-6 border-b border-gray-400">
               <div className="flex items-center gap-1">
                 <div className="w-8 h-8 lg:w-10 lg:h-10 flex items-center justify-center">
                   <GradixIcon className="w-6 h-6 lg:w-8 lg:h-8" />
@@ -467,7 +467,7 @@ export default function UploadDataPage() {
             </div>
 
             {/* Navigation */}
-            <nav className="p-3 lg:p-6 space-y-2">
+            <nav className="p-3 lg:p-4 space-y-2">
               <SidebarItem
                 icon={<AgentsIcon className="w-5 h-5 lg:w-6 lg:h-6" />}
                 label="All Agents"
@@ -507,38 +507,38 @@ export default function UploadDataPage() {
             </div>
 
             {/* Content */}
-            <div className="p-4 lg:p-8 h-[calc(100vh-120px)] overflow-y-auto">
+            <div className="p-4 lg:p-6 h-[calc(100vh-120px)] overflow-y-auto">
               {/* Agent Information - Horizontal Panel */}
-              <Card className="mb-6 bg-white border-[0.4px] border-[rgba(0,0,0,0.3)]">
-                <CardContent className="p-6">
+              <Card className="mb-4 bg-white border-[0.4px] border-[rgba(0,0,0,0.2)] shadow-sm">
+                <CardContent className="p-4">
                   {/* Top Row - Agent Name and Application Type */}
-                  <div className="flex items-start justify-between mb-6">
-                    <div className="flex items-start gap-8">
+                  <div className="flex items-start justify-between mb-4">
+                    <div className="flex items-start gap-6">
                       {/* Agent Name */}
                       <div>
-                        <div className="text-sm text-[rgba(0,0,0,0.8)] font-light mb-2">Agent Name</div>
+                        <div className="text-xs text-gray-600 mb-1">Agent Name</div>
                         {isEditing ? (
                           <Input
                             value={editableFormData.agentName}
                             onChange={(e) => handleEditInputChange('agentName', e.target.value)}
-                            className="text-sm w-64"
+                            className="text-xs w-48 h-8"
                           />
                         ) : (
-                          <div className="text-sm text-black font-medium">{formData.agentName}</div>
+                          <div className="text-xs text-black font-medium">{formData.agentName}</div>
                         )}
                       </div>
 
                       {/* Application Type */}
                       <div>
-                        <div className="text-sm text-[rgba(0,0,0,0.8)] font-light mb-2">Application Type</div>
+                        <div className="text-xs text-gray-600 mb-1">Application Type</div>
                         {isEditing ? (
                           <Input
                             value={editableFormData.applicationType}
                             onChange={(e) => handleEditInputChange('applicationType', e.target.value)}
-                            className="text-sm w-64"
+                            className="text-xs w-48 h-8"
                           />
                         ) : (
-                          <div className="text-sm text-black font-medium">{formData.applicationType}</div>
+                          <div className="text-xs text-black font-medium">{formData.applicationType}</div>
                         )}
                       </div>
                     </div>
@@ -546,19 +546,19 @@ export default function UploadDataPage() {
                     {/* Edit Controls */}
                     {!isEditing ? (
                       <button onClick={handleEditClick}>
-                        <EditIcon className="w-4 h-4 text-gray-400 hover:text-gray-600" />
+                        <EditIcon className="w-3.5 h-3.5 text-gray-300 hover:text-gray-500" />
                       </button>
                     ) : (
-                      <div className="flex gap-2">
+                      <div className="flex gap-1">
                         <button 
                           onClick={handleSaveEdit}
-                          className="text-xs bg-black text-white px-2 py-1 rounded hover:bg-gray-800"
+                          className="text-[10px] bg-black text-white px-2 py-1 rounded hover:bg-gray-800"
                         >
                           Save
                         </button>
                         <button 
                           onClick={handleCancelEdit}
-                          className="text-xs bg-gray-100 text-black px-2 py-1 rounded border border-gray-300 hover:bg-gray-200"
+                          className="text-[10px] bg-gray-100 text-black px-2 py-1 rounded border border-gray-300 hover:bg-gray-200"
                         >
                           Cancel
                         </button>
@@ -567,21 +567,21 @@ export default function UploadDataPage() {
                   </div>
 
                   {/* Bottom Row - Rubrics and Grading Instructions */}
-                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                     {/* Rubrics */}
                     <div>
-                      <div className="flex items-center justify-between mb-3">
-                        <div className="text-sm text-[rgba(0,0,0,0.8)] font-light">Rubrics</div>
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="text-xs text-gray-600">Rubrics</div>
                         {isEditing && (
                           <button
                             onClick={addRubric}
-                            className="text-xs bg-gray-100 text-black px-2 py-1 rounded border border-gray-300 hover:bg-gray-200"
+                            className="text-[10px] bg-gray-100 text-black px-1.5 py-0.5 rounded border border-gray-300 hover:bg-gray-200"
                           >
                             Add Rubric
                           </button>
                         )}
                       </div>
-                      <div className="max-h-40 overflow-y-auto">
+                      <div className="max-h-32 overflow-y-auto">
                         {isEditing ? (
                           <div className="space-y-2">
                             {editableFormData.rubrics?.map((rubric, index) => (
@@ -678,17 +678,17 @@ export default function UploadDataPage() {
                         </TabsTrigger>
                       </TabsList>
 
-                      <TabsContent value="setup" className="space-y-6 mt-6">
+                      <TabsContent value="setup" className="space-y-4 mt-4">
                         {/* Upload File Section */}
-                        <Card className="bg-white border-[0.4px] border-[rgba(0,0,0,0.3)] shadow-[0px_0px_6px_1px_rgba(0,0,0,0.06)]">
-                          <CardContent className="p-6">
+                        <Card className="bg-white border-[0.4px] border-[rgba(0,0,0,0.2)] shadow-sm">
+                          <CardContent className="p-4">
                             {/* Upload Tabs */}
-                            <div className="mb-6">
-                              <div className="flex gap-2 bg-[#eeeeee] p-1 rounded-2xl w-fit">
-                                <button className="bg-white px-4 py-2 rounded-xl shadow-[0px_0px_10px_1px_rgba(0,0,0,0.1)] text-sm font-medium">
+                            <div className="mb-4">
+                              <div className="flex gap-1 bg-gray-100 p-0.5 rounded-lg w-fit">
+                                <button className="bg-white px-3 py-1.5 rounded-md shadow-sm text-xs font-medium">
                                   Upload File
                                 </button>
-                                <button className="px-4 py-2 rounded-xl text-sm text-[rgba(0,0,0,0.7)]">
+                                <button className="px-3 py-1.5 rounded-md text-xs text-gray-600">
                                   API Key
                                 </button>
                               </div>
@@ -696,10 +696,10 @@ export default function UploadDataPage() {
 
                             {/* Upload Area */}
                             <div
-                              className={`border-2 border-dashed rounded-lg p-4 text-center transition-colors ${
+                              className={`border border-dashed rounded-lg p-6 text-center transition-colors ${
                                 isDragging 
                                   ? 'border-blue-400 bg-blue-50' 
-                                  : 'border-[rgba(0,0,0,0.6)] bg-[#f9f9f9]'
+                                  : 'border-gray-300 bg-gray-50'
                               }`}
                               onDragOver={handleDragOver}
                               onDragLeave={handleDragLeave}
@@ -713,23 +713,23 @@ export default function UploadDataPage() {
                                 className="hidden"
                               />
                               
-                              <div className="mb-3">
-                                <div className="w-12 h-12 bg-[#bcbcbc] rounded-full flex items-center justify-center mx-auto">
-                                  <UploadIcon className="w-5 h-5 text-white" />
+                              <div className="mb-2">
+                                <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center mx-auto">
+                                  <UploadIcon className="w-4 h-4 text-white" />
                                 </div>
                               </div>
                               
-                              <h3 className="text-lg font-medium text-black mb-2">
+                              <h3 className="text-sm font-medium text-black mb-1">
                                 {selectedFile ? selectedFile.name : 'Click or drag and drop to upload'}
                               </h3>
-                              <p className="text-sm text-[rgba(0,0,0,0.6)] mb-3">
+                              <p className="text-xs text-gray-600 mb-3">
                                 Upload from CSV, XLSV, Google Sheets
                               </p>
                               
                               <Button 
                                 variant="outline" 
                                 onClick={handleUploadClick}
-                                className="border-[rgba(0,0,0,0.4)]"
+                                className="text-xs py-1 px-3 border-gray-300"
                               >
                                 Choose File
                               </Button>
@@ -738,42 +738,42 @@ export default function UploadDataPage() {
                         </Card>
 
                         {/* Action Buttons */}
-                        <div className="flex justify-between pt-4">
+                        <div className="flex justify-between pt-3">
                           <Button
                             variant="outline"
                             onClick={handleBack}
-                            className="px-6 py-2 border-[0.6px] border-[rgba(0,0,0,0.4)] bg-transparent text-black hover:bg-gray-50"
+                            className="px-4 py-2 text-sm border border-gray-300 bg-transparent text-gray-700 hover:bg-gray-50"
                           >
                             Back
                           </Button>
                           
                           <Button
                             onClick={handleCompleteSetup}
-                            className="px-6 py-2 bg-neutral-900 text-white hover:bg-neutral-800 border-[0.6px] border-[rgba(0,0,0,0.4)]"
+                            className="px-4 py-2 text-sm bg-black text-white hover:bg-gray-800"
                           >
                             Start Grading
                           </Button>
                         </div>
 
                         {/* What happens next section */}
-                        <Card className="bg-[#f2f2f2] border-[0.6px] border-[rgba(0,0,0,0.2)]">
-                          <CardContent className="p-6">
-                            <h3 className="text-lg font-medium text-black mb-4">What happens next?</h3>
-                            <ul className="space-y-3 text-sm text-black">
+                        <Card className="bg-gray-50 border border-gray-200">
+                          <CardContent className="p-4">
+                            <h3 className="text-sm font-medium text-black mb-3">What happens next?</h3>
+                            <ul className="space-y-2 text-xs text-black">
                               <li className="flex items-start gap-2">
-                                <span className="w-1 h-1 bg-black rounded-full mt-2 flex-shrink-0"></span>
+                                <span className="w-1 h-1 bg-black rounded-full mt-1.5 flex-shrink-0"></span>
                                 Your file will be securely uploaded and analyzed
                               </li>
                               <li className="flex items-start gap-2">
-                                <span className="w-1 h-1 bg-black rounded-full mt-2 flex-shrink-0"></span>
+                                <span className="w-1 h-1 bg-black rounded-full mt-1.5 flex-shrink-0"></span>
                                 AI will generate application type and rubrics
                               </li>
                               <li className="flex items-start gap-2">
-                                <span className="w-1 h-1 bg-black rounded-full mt-2 flex-shrink-0"></span>
+                                <span className="w-1 h-1 bg-black rounded-full mt-1.5 flex-shrink-0"></span>
                                 Grading will be performed based on agent instructions
                               </li>
                               <li className="flex items-start gap-2">
-                                <span className="w-1 h-1 bg-black rounded-full mt-2 flex-shrink-0"></span>
+                                <span className="w-1 h-1 bg-black rounded-full mt-1.5 flex-shrink-0"></span>
                                 Results will appear in your grading logs
                               </li>
                             </ul>

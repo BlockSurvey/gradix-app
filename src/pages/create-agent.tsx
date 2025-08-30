@@ -64,14 +64,14 @@ interface SidebarItemProps {
 const SidebarItem = ({ icon, label, isActive = false, onClick }: SidebarItemProps) => (
   <button
     onClick={onClick}
-    className={`flex items-center gap-2 lg:gap-3 w-full px-3 lg:px-6 py-2 lg:py-3 rounded-lg text-left transition-colors ${
+    className={`flex items-center gap-2 lg:gap-3 w-full px-3 lg:px-4 py-2 lg:py-2.5 rounded-lg text-left transition-colors ${
       isActive 
         ? 'bg-[rgba(179,173,173,0.4)] text-gray-700' 
         : 'text-gray-700 hover:bg-gray-200'
     }`}
   >
     {icon}
-    <span className="font-medium text-sm lg:text-base">{label}</span>
+    <span className="font-medium text-sm lg:text-sm">{label}</span>
   </button>
 );
 
@@ -129,9 +129,9 @@ export default function CreateAgentPage() {
       <div className="min-h-screen bg-white">
         <div className="flex flex-col lg:flex-row">
           {/* Sidebar */}
-          <div className="w-full lg:w-72 bg-[#efeded] border-r border-gray-400 lg:min-h-screen">
+          <div className="w-full lg:w-56 bg-[#efeded] border-r border-gray-400 lg:min-h-screen">
             {/* Header */}
-            <div className="p-4 lg:p-8 border-b border-gray-400">
+            <div className="p-4 lg:p-6 border-b border-gray-400">
               <div className="flex items-center gap-1">
                 <div className="w-8 h-8 lg:w-10 lg:h-10 flex items-center justify-center">
                   <GradixIcon className="w-6 h-6 lg:w-8 lg:h-8" />
@@ -141,7 +141,7 @@ export default function CreateAgentPage() {
             </div>
 
             {/* Navigation */}
-            <nav className="p-3 lg:p-6 space-y-2">
+            <nav className="p-3 lg:p-4 space-y-2">
               <SidebarItem
                 icon={<AgentsIcon className="w-5 h-5 lg:w-6 lg:h-6" />}
                 label="All Agents"
@@ -172,15 +172,15 @@ export default function CreateAgentPage() {
             </div>
 
             {/* Form Content */}
-            <div className="p-4 lg:p-8">
-              <div className="flex gap-8">
+            <div className="p-4 lg:p-6">
+              <div className="flex gap-6">
                 {/* Left Column - Agent Creation Form */}
                 <div className="flex-1">
-                  <div className="bg-[#f2f2f2] rounded-2xl p-8 space-y-6">
+                  <div className="bg-[#f8f9fa] rounded-xl p-6 space-y-4">
                     {/* Agent Name */}
-                    <Card className="bg-white border-[0.4px] border-[rgba(0,0,0,0.3)] shadow-[0px_0px_6px_1px_rgba(0,0,0,0.06)]">
-                      <CardContent className="p-6">
-                        <Label htmlFor="agentName" className="text-base text-[rgba(0,0,0,0.8)] font-medium">
+                    <Card className="bg-white border-[0.4px] border-[rgba(0,0,0,0.2)] shadow-sm">
+                      <CardContent className="p-4">
+                        <Label htmlFor="agentName" className="text-sm text-gray-700 font-medium">
                           Agent Name*
                         </Label>
                         <Input
@@ -188,18 +188,18 @@ export default function CreateAgentPage() {
                           value={formData.agentName}
                           onChange={(e) => handleInputChange('agentName', e.target.value)}
                           placeholder="e.g., AI Hackathon Judge Agent"
-                          className="mt-4 h-12 border-[0.4px] border-[rgba(0,0,0,0.5)] text-base placeholder:text-[rgba(0,0,0,0.4)]"
+                          className="mt-2 h-10 border-[0.4px] border-gray-300 text-sm placeholder:text-gray-400"
                         />
                       </CardContent>
                     </Card>
 
                     {/* Application Type */}
-                    <Card className="bg-white border-[0.4px] border-[rgba(0,0,0,0.3)] shadow-[0px_0px_6px_1px_rgba(0,0,0,0.06)]">
-                      <CardContent className="p-6">
-                        <Label htmlFor="applicationType" className="text-base text-[rgba(0,0,0,0.8)] font-medium">
+                    <Card className="bg-white border-[0.4px] border-[rgba(0,0,0,0.2)] shadow-sm">
+                      <CardContent className="p-4">
+                        <Label htmlFor="applicationType" className="text-sm text-gray-700 font-medium">
                           Application Type*
                         </Label>
-                        <p className="text-xs text-[rgba(0,0,0,0.8)] mt-2 mb-4">
+                        <p className="text-xs text-gray-600 mt-1 mb-2">
                           What type of applications are you grading?
                         </p>
                         <Input
@@ -207,18 +207,18 @@ export default function CreateAgentPage() {
                           value={formData.applicationType}
                           onChange={(e) => handleInputChange('applicationType', e.target.value)}
                           placeholder="e.g., AI/ML Hackathon Projects"
-                          className="h-12 border-[0.4px] border-[rgba(0,0,0,0.6)] text-base placeholder:text-[rgba(0,0,0,0.4)]"
+                          className="h-10 border-[0.4px] border-gray-300 text-sm placeholder:text-gray-400"
                         />
                       </CardContent>
                     </Card>
 
                     {/* Rubric Criteria */}
-                    <Card className="bg-white border-[0.4px] border-[rgba(0,0,0,0.3)] shadow-[0px_0px_6px_1px_rgba(0,0,0,0.06)]">
-                      <CardContent className="p-6">
-                        <Label htmlFor="rubricCriteria" className="text-base text-[rgba(0,0,0,0.8)] font-medium">
+                    <Card className="bg-white border-[0.4px] border-[rgba(0,0,0,0.2)] shadow-sm">
+                      <CardContent className="p-4">
+                        <Label htmlFor="rubricCriteria" className="text-sm text-gray-700 font-medium">
                           Rubric / Grading Instructions*
                         </Label>
-                        <p className="text-xs text-[rgba(0,0,0,0.8)] mt-2 mb-4">
+                        <p className="text-xs text-gray-600 mt-1 mb-2">
                           Define your grading criteria and instructions
                         </p>
                         
@@ -227,24 +227,24 @@ export default function CreateAgentPage() {
                           value={formData.rubricCriteria}
                           onChange={(e) => handleInputChange('rubricCriteria', e.target.value)}
                           placeholder="e.g., Evaluate AI hackathon projects based on:&#10;– Innovation and creativity in AI/ML implementation&#10;– Technical execution and code quality&#10;– Real-world impact and practical applications&#10;– Presentation clarity and demo effectiveness&#10;– Use of cutting-edge AI technologies"
-                          className="h-32 border-[0.4px] border-[rgba(0,0,0,0.6)] text-sm placeholder:text-[rgba(0,0,0,0.4)] resize-none"
+                          className="h-24 border-[0.4px] border-gray-300 text-sm placeholder:text-gray-400 resize-none"
                         />
                       </CardContent>
                     </Card>
 
                     {/* Action Buttons */}
-                    <div className="flex justify-between pt-4">
+                    <div className="flex justify-between pt-3">
                       <Button
                         variant="outline"
                         onClick={handleCancel}
-                        className="px-6 py-2 border-[0.6px] border-[rgba(0,0,0,0.4)] bg-transparent text-black hover:bg-gray-50"
+                        className="px-4 py-2 text-sm border border-gray-300 bg-transparent text-gray-700 hover:bg-gray-50"
                       >
                         Cancel
                       </Button>
                       
                       <Button
                         onClick={handleCreateAgent}
-                        className="px-6 py-2 bg-neutral-900 text-white hover:bg-neutral-800 border-[0.6px] border-[rgba(0,0,0,0.4)]"
+                        className="px-4 py-2 text-sm bg-black text-white hover:bg-gray-800"
                       >
                         Create Agent
                       </Button>
@@ -253,41 +253,41 @@ export default function CreateAgentPage() {
                 </div>
 
                 {/* Right Column - Templates */}
-                <div className="w-96 flex-shrink-0">
-                  <div className="bg-white border-[0.4px] border-[rgba(0,0,0,0.3)] rounded-2xl p-6 shadow-[0px_0px_6px_1px_rgba(0,0,0,0.06)]">
-                    <h3 className="text-lg font-medium text-black mb-4">Sample Templates</h3>
-                    <p className="text-sm text-[rgba(0,0,0,0.6)] mb-6">
+                <div className="w-80 flex-shrink-0">
+                  <div className="bg-white border-[0.4px] border-[rgba(0,0,0,0.2)] rounded-xl p-4 shadow-sm">
+                    <h3 className="text-base font-medium text-black mb-2">Sample Templates</h3>
+                    <p className="text-xs text-gray-600 mb-4">
                       Get started quickly by using one of our pre-built templates
                     </p>
                     
-                    <div className="space-y-4">
+                    <div className="space-y-3">
                       {agentTemplates.map((template) => (
                         <Card 
                           key={template.id} 
-                          className="bg-[#f9f9f9] border-[0.4px] border-[rgba(0,0,0,0.2)] cursor-pointer hover:shadow-md transition-shadow"
+                          className="bg-gray-50 border-[0.4px] border-gray-200 cursor-pointer hover:shadow-sm transition-shadow"
                           onClick={() => handleTemplateSelect(template)}
                         >
-                          <CardContent className="p-4">
-                            <div className="flex items-start justify-between mb-2">
-                              <h4 className="text-sm font-medium text-black">{template.name}</h4>
-                              <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">
+                          <CardContent className="p-3">
+                            <div className="flex items-start justify-between mb-1">
+                              <h4 className="text-xs font-medium text-black line-clamp-2">{template.name}</h4>
+                              <span className="text-[10px] bg-gray-200 text-gray-600 px-1.5 py-0.5 rounded ml-2">
                                 Template
                               </span>
                             </div>
-                            <p className="text-xs text-[rgba(0,0,0,0.6)] mb-3 line-clamp-2">
+                            <p className="text-[10px] text-gray-600 mb-2 line-clamp-2">
                               {template.description}
                             </p>
-                            <div className="space-y-1">
-                              <div className="text-xs text-[rgba(0,0,0,0.7)]">
+                            <div className="space-y-0.5 mb-2">
+                              <div className="text-[10px] text-gray-500">
                                 <span className="font-medium">Type:</span> {template.applicationType}
                               </div>
-                              <div className="text-xs text-[rgba(0,0,0,0.7)]">
+                              <div className="text-[10px] text-gray-500">
                                 <span className="font-medium">Rubrics:</span> {template.rubrics.length} criteria
                               </div>
                             </div>
                             <Button
                               size="sm"
-                              className="w-full mt-3 bg-gray-100 text-black hover:bg-gray-200 border-[0.4px] border-[rgba(0,0,0,0.3)]"
+                              className="w-full text-[10px] py-1 bg-gray-200 text-gray-700 hover:bg-gray-300 border border-gray-300"
                               onClick={(e) => {
                                 e.stopPropagation();
                                 handleTemplateSelect(template);

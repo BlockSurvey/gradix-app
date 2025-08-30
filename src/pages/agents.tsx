@@ -76,14 +76,14 @@ interface SidebarItemProps {
 const SidebarItem = ({ icon, label, isActive = false, onClick }: SidebarItemProps) => (
   <button
     onClick={onClick}
-    className={`flex items-center gap-2 lg:gap-3 w-full px-3 lg:px-6 py-2 lg:py-3 rounded-lg text-left transition-colors ${
+    className={`flex items-center gap-2 lg:gap-3 w-full px-3 lg:px-4 py-2 lg:py-2.5 rounded-lg text-left transition-colors ${
       isActive 
         ? 'bg-[rgba(179,173,173,0.4)] text-gray-700' 
         : 'text-gray-700 hover:bg-gray-200'
     }`}
   >
     {icon}
-    <span className="font-medium text-sm lg:text-base">{label}</span>
+    <span className="font-medium text-sm lg:text-sm">{label}</span>
   </button>
 );
 
@@ -196,9 +196,9 @@ export default function AgentsPage() {
       <div className="min-h-screen bg-white">
         <div className="flex flex-col lg:flex-row">
           {/* Sidebar */}
-          <div className="w-full lg:w-72 bg-[#efeded] border-r border-gray-400 lg:min-h-screen">
+          <div className="w-full lg:w-56 bg-[#efeded] border-r border-gray-400 lg:min-h-screen">
             {/* Header */}
-            <div className="p-4 lg:p-8 border-b border-gray-400">
+            <div className="p-4 lg:p-6 border-b border-gray-400">
               <div className="flex items-center gap-1">
                 <div className="w-8 h-8 lg:w-10 lg:h-10 flex items-center justify-center">
                   <GradixIcon className="w-6 h-6 lg:w-8 lg:h-8" />
@@ -208,7 +208,7 @@ export default function AgentsPage() {
             </div>
 
             {/* Navigation */}
-            <nav className="p-3 lg:p-6 space-y-2">
+            <nav className="p-3 lg:p-4 space-y-2">
               <SidebarItem
                 icon={<AgentsIcon className="w-5 h-5 lg:w-6 lg:h-6" />}
                 label="All Agents"
@@ -284,56 +284,56 @@ export default function AgentsPage() {
                   )}
                 </div>
               ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-start justify-items-start">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 items-start justify-items-start">
                   {filteredAgents.map((agent) => (
                     <Card 
                       key={agent.id} 
-                      className="bg-white border-[0.6px] border-[rgba(0,0,0,0.4)] h-[260px] w-full relative cursor-pointer hover:shadow-lg transition-shadow"
+                      className="bg-white border-[0.4px] border-[rgba(0,0,0,0.3)] h-[180px] w-full relative cursor-pointer hover:shadow-md transition-shadow"
                       onClick={() => handleAgentClick(agent)}
                     >
-                      <CardContent className="p-5 h-full flex flex-col">
+                      <CardContent className="p-4 h-full flex flex-col">
                         {/* Header with icon and menu */}
-                        <div className="flex items-start justify-between mb-4">
+                        <div className="flex items-start justify-between mb-3">
                           <div className="flex items-center gap-2">
-                            <div className="w-5 h-5 bg-gray-300 rounded flex items-center justify-center">
-                              <RobotIcon className="w-3 h-3 text-gray-600" />
+                            <div className="w-4 h-4 bg-gray-200 rounded flex items-center justify-center">
+                              <RobotIcon className="w-2.5 h-2.5 text-gray-500" />
                             </div>
                             {agent.isTemplate && (
-                              <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded font-medium">
+                              <span className="text-[10px] bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded font-medium">
                                 Template
                               </span>
                             )}
                           </div>
                           <button 
-                            className="text-gray-400 hover:text-gray-600"
+                            className="text-gray-300 hover:text-gray-500"
                             onClick={(e) => e.stopPropagation()}
                           >
-                            <DotsIcon className="w-5 h-5" />
+                            <DotsIcon className="w-4 h-4" />
                           </button>
                         </div>
 
                         {/* Agent name */}
-                        <div className="mb-4 flex-1 min-h-0">
-                          <h3 className="text-lg font-medium text-black">{agent.name}</h3>
+                        <div className="mb-3 flex-1 min-h-0">
+                          <h3 className="text-sm font-medium text-black leading-tight">{agent.name}</h3>
                         </div>
 
                         {/* Stats grid */}
-                        <div className="space-y-1.5 text-sm mt-auto">
+                        <div className="space-y-1 text-xs mt-auto">
                           <div className="flex justify-between items-center">
-                            <span className="text-[rgba(0,0,0,0.7)] text-xs">Created on:</span>
-                            <span className="text-black font-medium text-xs">{formatDate(agent.createdAt)}</span>
+                            <span className="text-gray-500">Created:</span>
+                            <span className="text-black font-medium">{formatDate(agent.createdAt)}</span>
                           </div>
                           <div className="flex justify-between items-center">
-                            <span className="text-[rgba(0,0,0,0.7)] text-xs">Last used:</span>
-                            <span className="text-black font-medium text-xs">{formatLastUsed(agent.lastUsed)}</span>
+                            <span className="text-gray-500">Last used:</span>
+                            <span className="text-black font-medium">{formatLastUsed(agent.lastUsed)}</span>
                           </div>
                           <div className="flex justify-between items-center">
-                            <span className="text-[rgba(0,0,0,0.7)] text-xs">Graded Files:</span>
-                            <span className="text-black font-medium text-xs">{agent.gradedFiles}</span>
+                            <span className="text-gray-500">Files:</span>
+                            <span className="text-black font-medium">{agent.gradedFiles}</span>
                           </div>
                           <div className="flex justify-between items-center">
-                            <span className="text-[rgba(0,0,0,0.7)] text-xs">Average score:</span>
-                            <span className="text-black font-medium text-xs">{agent.averageScore}/100</span>
+                            <span className="text-gray-500">Score:</span>
+                            <span className="text-black font-medium">{agent.averageScore}/100</span>
                           </div>
                         </div>
                       </CardContent>
