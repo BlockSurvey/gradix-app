@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { agentTemplates } from '@/data/templates';
 
@@ -303,6 +304,15 @@ export default function UploadDataPage() {
     stage: 'Initializing AI Grader',
     description: 'Setting up AI models and processing environment...'
   });
+  
+  // Application Form State
+  const [applicationFormData, setApplicationFormData] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    responses: {} as { [key: string]: string }
+  });
+  
   const candidateDropdownRef = useRef<HTMLDivElement>(null);
   const gradeDropdownRef = useRef<HTMLDivElement>(null);
 
@@ -566,6 +576,170 @@ export default function UploadDataPage() {
     }));
   };
 
+  // Application form handlers
+  const handleApplicationFormChange = (field: string, value: string) => {
+    setApplicationFormData(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handleRubricResponse = (rubricName: string, value: string) => {
+    setApplicationFormData(prev => ({
+      ...prev,
+      responses: { ...prev.responses, [rubricName]: value }
+    }));
+  };
+
+  // Get contextual form fields based on agent type
+  const getContextualFormFields = () => {
+    const agentName = formData?.agentName?.toLowerCase() || '';
+    const applicationType = formData?.applicationType?.toLowerCase() || '';
+
+    // AI Hackathon specific fields
+    if (agentName.includes('hackathon') || applicationType.includes('hackathon')) {
+      return [
+        { id: 'teamName', label: 'Team Name *', type: 'text', placeholder: 'Enter your team name' },
+        { id: 'githubUrl', label: 'GitHub Repository URL *', type: 'url', placeholder: 'https://github.com/username/project' },
+        { id: 'demoUrl', label: 'Project Demo/Link', type: 'url', placeholder: 'https://your-demo-link.com' },
+        { id: 'idea', label: 'Idea *', type: 'textarea', placeholder: 'Briefly describe your project idea' },
+        { id: 'description', label: 'Description *', type: 'textarea', placeholder: 'Detailed description of your project' },
+        { id: 'technologies', label: 'Technologies Used *', type: 'textarea', placeholder: 'List the technologies, frameworks, and tools used' },
+        { id: 'problemSolved', label: 'Problem Solved *', type: 'textarea', placeholder: 'What problem does your project solve?' },
+        { id: 'targetAudience', label: 'Target Audience', type: 'text', placeholder: 'Who is your target audience?' },
+        { id: 'projectStatus', label: 'Project Status *', type: 'select', options: ['MVP/Prototype', 'Working Beta', 'Production Ready', 'Concept/Design Only'] },
+        { id: 'challenges', label: 'Challenges Faced', type: 'textarea', placeholder: 'What challenges did you encounter and how did you overcome them?' },
+        { id: 'futurePlans', label: 'Future Plans', type: 'textarea', placeholder: 'What are your plans for this project moving forward?' },
+        { id: 'license', label: 'License Type', type: 'select', options: ['MIT', 'Apache 2.0', 'GPL v3', 'BSD', 'Creative Commons', 'Proprietary', 'Other'] }
+      ];
+    }
+
+    // AI Founder Event specific fields
+    if (agentName.includes('founder') || applicationType.includes('founder')) {
+      return [
+        { id: 'companyName', label: 'Company/Startup Name *', type: 'text', placeholder: 'Enter your company or startup name' },
+        { id: 'position', label: 'Current Position/Role *', type: 'text', placeholder: 'CEO, CTO, Founder, Co-founder, etc.' },
+        { id: 'industry', label: 'Industry Focus *', type: 'select', options: ['Artificial Intelligence', 'Machine Learning', 'Data Science', 'Robotics', 'NLP/LLMs', 'Computer Vision', 'Healthcare AI', 'FinTech AI', 'EdTech AI', 'Enterprise AI', 'Consumer AI', 'Other'] },
+        { id: 'companyStage', label: 'Company Stage *', type: 'select', options: ['Idea Stage', 'Pre-Seed', 'Seed', 'Series A', 'Series B+', 'Established Company', 'Solo Founder'] },
+        { id: 'teamSize', label: 'Current Team Size *', type: 'select', options: ['Just me', '2-5 people', '6-15 people', '16-50 people', '51-100 people', '100+ people'] },
+        { id: 'linkedinUrl', label: 'LinkedIn Profile *', type: 'url', placeholder: 'https://linkedin.com/in/yourprofile' },
+        { id: 'companyWebsite', label: 'Company Website/Portfolio', type: 'url', placeholder: 'https://yourcompany.com' },
+        { id: 'yearsOfExperience', label: 'Years in AI/Tech *', type: 'select', options: ['Less than 1 year', '1-2 years', '3-5 years', '6-10 years', '11-15 years', '15+ years'] },
+        { id: 'previousExits', label: 'Previous Exits/Acquisitions', type: 'textarea', placeholder: 'Describe any previous successful exits, acquisitions, or notable achievements' },
+        { id: 'leadershipExp', label: 'Leadership Experience *', type: 'textarea', placeholder: 'Describe your leadership roles, team management experience, and key achievements' },
+        { id: 'aiVision', label: 'AI Vision & Strategy *', type: 'textarea', placeholder: 'What is your vision for AI in your industry? How do you see AI evolving?' },
+        { id: 'networkingGoals', label: 'Networking Goals *', type: 'textarea', placeholder: 'Who would you like to connect with? What partnerships are you seeking?' },
+        { id: 'challengesFaced', label: 'Current Challenges *', type: 'textarea', placeholder: 'What are the biggest challenges you are facing as an AI founder?' },
+        { id: 'mentorshipNeeds', label: 'Mentorship/Advisory Needs', type: 'textarea', placeholder: 'What areas would you like mentorship or advisory support in?' },
+        { id: 'thoughtLeadership', label: 'Thought Leadership Activities', type: 'textarea', placeholder: 'Speaking engagements, publications, podcasts, community involvement, etc.' },
+        { id: 'whyAttend', label: 'Why do you want to attend? *', type: 'textarea', placeholder: 'What specific value are you hoping to gain from this founder event?' },
+        { id: 'contribution', label: 'How will you contribute? *', type: 'textarea', placeholder: 'What expertise, connections, or value can you bring to other attendees?' },
+        { id: 'fundingStatus', label: 'Current Funding Status', type: 'select', options: ['Bootstrapped', 'Looking for Pre-Seed', 'Looking for Seed', 'Looking for Series A', 'Recently Funded', 'Not seeking funding'] }
+      ];
+    }
+
+    // AI Startup Pitch specific fields
+    if (agentName.includes('startup') || agentName.includes('pitch') || applicationType.includes('startup') || applicationType.includes('pitch')) {
+      return [
+        { id: 'startupName', label: 'Startup Name *', type: 'text', placeholder: 'Enter your startup name' },
+        { id: 'tagline', label: 'Company Tagline *', type: 'text', placeholder: 'One-line description of what you do' },
+        { id: 'industry', label: 'Industry Vertical *', type: 'select', options: ['Healthcare AI', 'FinTech AI', 'EdTech AI', 'Enterprise SaaS', 'Consumer AI', 'Robotics & Automation', 'Data & Analytics', 'Computer Vision', 'NLP & LLMs', 'Cybersecurity AI', 'Marketing AI', 'Other'] },
+        { id: 'website', label: 'Company Website', type: 'url', placeholder: 'https://yourstartup.com' },
+        { id: 'pitchDeckUrl', label: 'Pitch Deck URL *', type: 'url', placeholder: 'Link to your pitch deck (Google Drive, Dropbox, etc.)' },
+        { id: 'problemStatement', label: 'Problem Statement *', type: 'textarea', placeholder: 'What specific problem are you solving? Why is it important?' },
+        { id: 'solution', label: 'Solution Overview *', type: 'textarea', placeholder: 'How does your solution solve this problem? What makes it unique?' },
+        { id: 'marketSize', label: 'Market Size & Opportunity *', type: 'textarea', placeholder: 'TAM, SAM, SOM - describe the market opportunity with numbers if available' },
+        { id: 'businessModel', label: 'Business Model *', type: 'textarea', placeholder: 'How do you make money? Pricing strategy, revenue streams, unit economics' },
+        { id: 'customerSegment', label: 'Target Customer Segment *', type: 'textarea', placeholder: 'Who are your ideal customers? B2B/B2C? Company size, demographics, etc.' },
+        { id: 'teamInfo', label: 'Founding Team *', type: 'textarea', placeholder: 'Introduce founders and key team members, their backgrounds and expertise' },
+        { id: 'advisors', label: 'Key Advisors/Investors', type: 'textarea', placeholder: 'Notable advisors, investors, or board members' },
+        { id: 'productStage', label: 'Product Development Stage *', type: 'select', options: ['Concept/Wireframes', 'MVP/Prototype', 'Beta with Select Users', 'Public Beta', 'General Availability', 'Scaling & Growth'] },
+        { id: 'traction', label: 'Traction Metrics *', type: 'textarea', placeholder: 'Users, revenue, partnerships, pilot customers, growth metrics - include numbers' },
+        { id: 'revenueMetrics', label: 'Revenue & Financial Metrics', type: 'textarea', placeholder: 'MRR, ARR, customer acquisition cost, lifetime value, burn rate, runway' },
+        { id: 'competitiveAdvantage', label: 'Competitive Advantage *', type: 'textarea', placeholder: 'What makes you different? IP, technology, team, market position, etc.' },
+        { id: 'competitors', label: 'Key Competitors', type: 'textarea', placeholder: 'Who are your main competitors and how do you differentiate?' },
+        { id: 'aiInnovation', label: 'AI Technology & Innovation *', type: 'textarea', placeholder: 'Describe your AI technology, models used, data strategy, technical differentiators' },
+        { id: 'scalability', label: 'Scalability Strategy', type: 'textarea', placeholder: 'How will you scale the business and technology?' },
+        { id: 'fundingAsk', label: 'Funding Ask *', type: 'select', options: ['Not seeking funding', '$50K - $250K', '$250K - $500K', '$500K - $1M', '$1M - $2.5M', '$2.5M - $5M', '$5M - $10M', '$10M+'] },
+        { id: 'useOfFunds', label: 'Use of Funds', type: 'textarea', placeholder: 'How will you use the funding? Hiring, product development, marketing, etc.' },
+        { id: 'milestones', label: 'Key Milestones & Timeline', type: 'textarea', placeholder: 'What are your key milestones for the next 12-18 months?' },
+        { id: 'risks', label: 'Key Risks & Mitigation', type: 'textarea', placeholder: 'What are the main risks to your business and how are you addressing them?' }
+      ];
+    }
+
+    // Default generic fields (fallback)
+    return [
+      { id: 'background', label: 'Background *', type: 'textarea', placeholder: 'Tell us about your background and experience' },
+      { id: 'motivation', label: 'Motivation *', type: 'textarea', placeholder: 'Why are you applying for this?' },
+      { id: 'experience', label: 'Relevant Experience', type: 'textarea', placeholder: 'Describe your relevant experience' },
+      { id: 'goals', label: 'Goals', type: 'textarea', placeholder: 'What do you hope to achieve?' }
+    ];
+  };
+
+  const handleApplicationSubmit = () => {
+    if (!formData) {
+      alert('Agent data is missing');
+      return;
+    }
+
+    // Validate required fields
+    if (!applicationFormData.name.trim()) {
+      alert('Please enter your name');
+      return;
+    }
+    if (!applicationFormData.email.trim()) {
+      alert('Please enter your email');
+      return;
+    }
+
+    // Validate contextual form fields
+    const contextualFields = getContextualFormFields();
+    const requiredFields = contextualFields.filter(field => field.label.includes('*'));
+    const missingFields = requiredFields.filter(
+      field => !applicationFormData.responses[field.id]?.trim()
+    );
+
+    if (missingFields.length > 0) {
+      alert(`Please fill in required fields: ${missingFields.map(f => f.label.replace(' *', '')).join(', ')}`);
+      return;
+    }
+
+    // Show success and simulate processing
+    alert('Application submitted successfully! Processing...');
+    
+    // Reset form
+    setApplicationFormData({
+      name: '',
+      email: '',
+      phone: '',
+      responses: {}
+    });
+  };
+  // Generate shareable form URL
+  const generateShareableUrl = () => {
+    if (!formData) return '';
+    
+    // Find matching template for shareable form
+    let agentId = '';
+    const agentName = formData.agentName.toLowerCase();
+    const applicationType = formData.applicationType.toLowerCase();
+    
+    if (agentName.includes('hackathon') || applicationType.includes('hackathon')) {
+      agentId = 'ai-hackathon-judge';
+    } else if (agentName.includes('founder') || applicationType.includes('founder')) {
+      agentId = 'ai-founder-registration';
+    } else if (agentName.includes('startup') || agentName.includes('pitch') || applicationType.includes('startup') || applicationType.includes('pitch')) {
+      agentId = 'ai-startup-pitch';
+    } else {
+      agentId = 'ai-hackathon-judge'; // fallback
+    }
+    
+    return `${window.location.origin}/form/${agentId}`;
+  };
+  
+  const handleCopyShareUrl = () => {
+    const shareUrl = generateShareableUrl();
+    navigator.clipboard.writeText(shareUrl);
+    alert('Form URL copied to clipboard!');
+  };
+
   // Sample detailed results data
   const detailedResults: DetailedResult[] = [
     {
@@ -656,7 +830,7 @@ export default function UploadDataPage() {
   };
 
   const handleCopyApiKey = () => {
-    navigator.clipboard.writeText('ak_rak7k••••••••••••••••••••••••ip5l');
+    navigator.clipboard.writeText('ak_rak7k••••••••••••••••••••••••••ip5l');
     alert('API key copied to clipboard!');
   };
 
@@ -1070,6 +1244,21 @@ export default function UploadDataPage() {
                               >
                                 API Key
                               </button>
+                              <button
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  e.stopPropagation();
+                                  console.log('Application Form tab clicked');
+                                  setActiveSetupTab('form');
+                                }}
+                                className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
+                                  activeSetupTab === 'form'
+                                    ? 'bg-white shadow-sm text-black'
+                                    : 'text-gray-600 hover:bg-gray-50'
+                                }`}
+                              >
+                                Application Form
+                              </button>
                             </div>
                           </div>
 
@@ -1164,7 +1353,7 @@ export default function UploadDataPage() {
                                   
                                   <div className="flex gap-2 mb-2">
                                     <Input
-                                      value="ak_rak7k••••••••••••••••••••••••ip5l"
+                                      value="ak_rak7k••••••••••••••••••••••••••ip5l"
                                       className="flex-1 border border-gray-300 bg-white"
                                       readOnly
                                     />
@@ -1234,6 +1423,191 @@ export default function UploadDataPage() {
                               </div>
                             </div>
                           )}
+
+                          {/* Application Form Content */}
+                          {activeSetupTab === 'form' && (
+                            <div className="space-y-6">
+                              <div className="bg-white border border-gray-300 rounded-lg p-6">
+                                <h3 className="text-lg font-medium text-black mb-6">
+                                  Individual Application Form
+                                </h3>
+                                <p className="text-sm text-gray-600 mb-6">
+                                  Submit individual applications for evaluation by this agent.
+                                </p>
+
+                                {/* Applicant Information */}
+                                <div className="space-y-4 mb-6">
+                                  <h4 className="text-base font-medium text-black">
+                                    Applicant Information
+                                  </h4>
+                                  
+                                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                      <Label htmlFor="applicant-name" className="text-sm font-medium text-gray-700">
+                                        Full Name *
+                                      </Label>
+                                      <Input
+                                        id="applicant-name"
+                                        value={applicationFormData.name}
+                                        onChange={(e) => handleApplicationFormChange('name', e.target.value)}
+                                        placeholder="Enter your full name"
+                                        className="mt-1"
+                                      />
+                                    </div>
+                                    
+                                    <div>
+                                      <Label htmlFor="applicant-email" className="text-sm font-medium text-gray-700">
+                                        Email Address *
+                                      </Label>
+                                      <Input
+                                        id="applicant-email"
+                                        type="email"
+                                        value={applicationFormData.email}
+                                        onChange={(e) => handleApplicationFormChange('email', e.target.value)}
+                                        placeholder="Enter your email address"
+                                        className="mt-1"
+                                      />
+                                    </div>
+                                    
+                                    <div className="md:col-span-1">
+                                      <Label htmlFor="applicant-phone" className="text-sm font-medium text-gray-700">
+                                        Phone Number (Optional)
+                                      </Label>
+                                      <Input
+                                        id="applicant-phone"
+                                        value={applicationFormData.phone}
+                                        onChange={(e) => handleApplicationFormChange('phone', e.target.value)}
+                                        placeholder="Enter your phone number"
+                                        className="mt-1"
+                                      />
+                                    </div>
+                                  </div>
+                                </div>
+
+                                {/* Contextual Form Fields */}
+                                <div className="space-y-6">
+                                  <h4 className="text-base font-medium text-black">
+                                    Application Details
+                                  </h4>
+                                  
+                                  {getContextualFormFields().map((field, index) => (
+                                    <div key={field.id} className="space-y-2">
+                                      <Label htmlFor={field.id} className="text-sm font-medium text-gray-700">
+                                        {field.label}
+                                      </Label>
+                                      
+                                      {field.type === 'textarea' ? (
+                                        <Textarea
+                                          id={field.id}
+                                          value={applicationFormData.responses[field.id] || ''}
+                                          onChange={(e) => handleRubricResponse(field.id, e.target.value)}
+                                          placeholder={field.placeholder}
+                                          className="min-h-[100px] text-sm resize-none"
+                                        />
+                                      ) : field.type === 'select' ? (
+                                        <select
+                                          id={field.id}
+                                          value={applicationFormData.responses[field.id] || ''}
+                                          onChange={(e) => handleRubricResponse(field.id, e.target.value)}
+                                          className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent"
+                                        >
+                                          <option value="" className="bg-white text-gray-900">Select an option...</option>
+                                          {field.options?.map((option, optIndex) => (
+                                            <option key={optIndex} value={option} className="bg-white text-gray-900">
+                                              {option}
+                                            </option>
+                                          ))}
+                                        </select>
+                                      ) : (
+                                        <Input
+                                          id={field.id}
+                                          type={field.type}
+                                          value={applicationFormData.responses[field.id] || ''}
+                                          onChange={(e) => handleRubricResponse(field.id, e.target.value)}
+                                          placeholder={field.placeholder}
+                                          className="text-sm"
+                                        />
+                                      )}
+                                    </div>
+                                  ))}
+                                </div>
+
+                                {/* Submit Button */}
+                                <div className="flex justify-end pt-6">
+                                  <Button
+                                    onClick={handleApplicationSubmit}
+                                    className="bg-black text-white hover:bg-gray-800 px-8 py-2"
+                                  >
+                                    Submit Application
+                                  </Button>
+                                </div>
+                              </div>
+
+                              {/* Share Form Section */}
+                              <div className="bg-white border border-gray-300 rounded-lg p-6 mt-6">
+                                <h3 className="text-lg font-medium text-black mb-4">
+                                  Share Application Form
+                                </h3>
+                                <p className="text-sm text-gray-600 mb-4">
+                                  Generate a shareable link for external applicants to submit applications directly.
+                                </p>
+
+                                <div className="space-y-4">
+                                  {/* Shareable URL Display */}
+                                  <div>
+                                    <Label className="text-sm font-medium text-gray-700 mb-2 block">
+                                      Shareable Form URL
+                                    </Label>
+                                    <div className="flex gap-2">
+                                      <Input
+                                        value={generateShareableUrl()}
+                                        readOnly
+                                        className="flex-1 bg-gray-50 text-sm font-mono"
+                                        placeholder="Form URL will appear here..."
+                                      />
+                                      <Button
+                                        onClick={handleCopyShareUrl}
+                                        variant="outline"
+                                        className="px-3 border border-gray-300 bg-white hover:bg-gray-50"
+                                      >
+                                        <CopyIcon className="w-4 h-4 text-gray-500" />
+                                      </Button>
+                                    </div>
+                                  </div>
+
+                                  {/* Instructions */}
+                                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                                    <div className="flex items-start gap-3">
+                                      <InfoIcon className="w-4 h-4 text-blue-600 mt-0.5 flex-shrink-0" />
+                                      <div className="text-sm">
+                                        <p className="text-blue-800 font-medium mb-1">How to use:</p>
+                                        <ul className="text-blue-700 space-y-1 text-xs">
+                                          <li>• Copy the URL above and share it with applicants</li>
+                                          <li>• Applications submitted through this link will appear in your Grading Logs</li>
+                                          <li>• The form includes all contextual fields based on your agent type</li>
+                                          <li>• Each submission will be automatically processed by your AI agent</li>
+                                        </ul>
+                                      </div>
+                                    </div>
+                                  </div>
+
+                                  {/* Preview Button */}
+                                  <div className="flex justify-center pt-2">
+                                    <Button
+                                      onClick={() => window.open(generateShareableUrl(), '_blank')}
+                                      variant="outline"
+                                      className="text-sm px-4 py-2 border border-gray-300 bg-white hover:bg-gray-50"
+                                    >
+                                      <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                                      </svg>
+                                      Preview Form
+                                    </Button>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          )}
                         </CardContent>
                       </Card>
 
@@ -1261,39 +1635,11 @@ export default function UploadDataPage() {
                               onClick={handleCompleteSetup}
                               className="px-4 py-2 text-sm bg-black text-white hover:bg-gray-800"
                             >
-                              Start Grading
+                              Complete Setup
                             </Button>
                           </div>
                         </div>
                       )}
-
-                      {/* What happens next section */}
-                      <Card className="bg-gray-50 border border-gray-200">
-                        <CardContent className="p-4">
-                          <h3 className="text-sm font-medium text-black mb-3">
-                            What happens next?
-                          </h3>
-                          <ul className="space-y-2 text-xs text-black">
-                            <li className="flex items-start gap-2">
-                              <span className="w-1 h-1 bg-black rounded-full mt-1.5 flex-shrink-0"></span>
-                              Your file will be securely uploaded and analyzed
-                            </li>
-                            <li className="flex items-start gap-2">
-                              <span className="w-1 h-1 bg-black rounded-full mt-1.5 flex-shrink-0"></span>
-                              AI will generate application type and rubrics
-                            </li>
-                            <li className="flex items-start gap-2">
-                              <span className="w-1 h-1 bg-black rounded-full mt-1.5 flex-shrink-0"></span>
-                              Grading will be performed based on agent
-                              instructions
-                            </li>
-                            <li className="flex items-start gap-2">
-                              <span className="w-1 h-1 bg-black rounded-full mt-1.5 flex-shrink-0"></span>
-                              Results will appear in your grading logs
-                            </li>
-                          </ul>
-                        </CardContent>
-                      </Card>
                     </TabsContent>
 
                     <TabsContent value="logs" className="mt-6">
@@ -1388,863 +1734,6 @@ export default function UploadDataPage() {
                             </CardContent>
                           </Card>
                         </div>
-
-                        {/* Results Section */}
-                        <div className="bg-white rounded-[10px] border-[0.8px] border-[rgba(0,0,0,0.2)] overflow-hidden">
-                          {/* Results Header */}
-                          <div className="p-6">
-                            <div className="flex items-center justify-between mb-4">
-                              <div className="flex items-center gap-4">
-                                <div className="bg-gray-100 p-0.5 rounded-lg flex border border-gray-300">
-                                  <button
-                                    onClick={() => setLogsView('results')}
-                                    className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
-                                      logsView === 'results'
-                                        ? 'bg-white text-black shadow-sm'
-                                        : 'text-gray-600 hover:bg-gray-50'
-                                    }`}
-                                  >
-                                    All Evaluation Results ({allCandidatesData.length})
-                                  </button>
-                                  <button
-                                    onClick={() => setLogsView('analytics')}
-                                    className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
-                                      logsView === 'analytics'
-                                        ? 'bg-white text-black shadow-sm'
-                                        : 'text-gray-600 hover:bg-gray-50'
-                                    }`}
-                                  >
-                                    Result Analytics
-                                  </button>
-                                  <button
-                                    onClick={() => setLogsView('email-analytics')}
-                                    className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
-                                      logsView === 'email-analytics'
-                                        ? 'bg-white text-black shadow-sm'
-                                        : 'text-gray-600 hover:bg-gray-50'
-                                    }`}
-                                  >
-                                    Email Analytics
-                                  </button>
-                                </div>
-                              </div>
-                              <div className="flex gap-2">
-                                <button 
-                                  onClick={() => setShowEmailCampaign(true)}
-                                  className="flex items-center gap-1.5 border border-gray-300 bg-white hover:bg-gray-50 text-gray-700 text-sm px-3 py-1.5 rounded-md transition-colors"
-                                >
-                                  <svg
-                                    className="w-3.5 h-3.5 text-gray-700"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    viewBox="0 0 24 24"
-                                  >
-                                    <path
-                                      strokeLinecap="round"
-                                      strokeLinejoin="round"
-                                      strokeWidth={2}
-                                      d="M3 8l7.89 7.89a2 2 0 002.83 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-                                    />
-                                  </svg>
-                                  Email Campaign
-                                </button>
-                                <button className="flex items-center gap-1.5 border border-gray-300 bg-white hover:bg-gray-50 text-gray-700 text-sm px-3 py-1.5 rounded-md transition-colors">
-                                  <svg
-                                    className="w-3.5 h-3.5 text-gray-700"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    viewBox="0 0 24 24"
-                                  >
-                                    <path
-                                      strokeLinecap="round"
-                                      strokeLinejoin="round"
-                                      strokeWidth={2}
-                                      d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                                    />
-                                  </svg>
-                                  Export Results
-                                </button>
-                              </div>
-                            </div>
-
-                            {/* Search and Filters */}
-                            <div className="flex items-center justify-between mb-6 p-4 bg-white rounded-[10px] border-[0.8px] border-[rgba(0,0,0,0.2)]">
-                              <div className="flex-1 max-w-[620px]">
-                                <div className="relative">
-                                  <svg
-                                    className="absolute left-4 top-1/2 transform -translate-y-1/2 w-4 h-4 text-[rgba(0,0,0,0.4)]"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    viewBox="0 0 24 24"
-                                  >
-                                    <path
-                                      strokeLinecap="round"
-                                      strokeLinejoin="round"
-                                      strokeWidth={2}
-                                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                                    />
-                                  </svg>
-                                  <Input
-                                    placeholder="Select by name or email"
-                                    className="pl-12 h-10 border-[0.8px] border-[rgba(0,0,0,0.8)] text-sm placeholder:text-[rgba(0,0,0,0.6)] bg-white text-black"
-                                  />
-                                </div>
-                              </div>
-                              <div className="flex gap-3 ml-4">
-                                {/* Candidate Filter Dropdown */}
-                                <div
-                                  className="relative"
-                                  ref={candidateDropdownRef}
-                                >
-                                  <button
-                                    onClick={() =>
-                                      setShowCandidateDropdown(
-                                        !showCandidateDropdown
-                                      )
-                                    }
-                                    className="flex items-center gap-2 border-[0.8px] border-[rgba(0,0,0,0.8)] bg-white hover:bg-gray-50 text-sm text-black font-medium px-4 py-2 rounded-md shadow-sm transition-colors"
-                                  >
-                                    {selectedCandidateFilter}
-                                    <svg
-                                      className={`w-3.5 h-3.5 text-black transition-transform ${
-                                        showCandidateDropdown
-                                          ? 'rotate-0'
-                                          : 'rotate-180'
-                                      }`}
-                                      fill="none"
-                                      stroke="currentColor"
-                                      viewBox="0 0 24 24"
-                                    >
-                                      <path
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth={2}
-                                        d="M19 9l-7 7-7-7"
-                                      />
-                                    </svg>
-                                  </button>
-                                  {showCandidateDropdown && (
-                                    <div className="absolute top-full left-0 mt-2 w-48 bg-white border-[0.8px] border-[rgba(0,0,0,0.8)] rounded-md shadow-lg z-10">
-                                      {candidateFilterOptions.map(option => (
-                                        <button
-                                          key={option}
-                                          onClick={() =>
-                                            handleCandidateFilterSelect(option)
-                                          }
-                                          className={`w-full text-left px-4 py-2 text-sm text-black hover:bg-gray-50 transition-colors ${
-                                            selectedCandidateFilter === option
-                                              ? 'bg-gray-100 font-medium text-black'
-                                              : 'text-black'
-                                          }`}
-                                          style={{ color: '#000000' }}
-                                        >
-                                          {option}
-                                        </button>
-                                      ))}
-                                    </div>
-                                  )}
-                                </div>
-
-                                {/* Grade Filter Dropdown */}
-                                <div
-                                  className="relative"
-                                  ref={gradeDropdownRef}
-                                >
-                                  <button
-                                    onClick={() =>
-                                      setShowGradeDropdown(!showGradeDropdown)
-                                    }
-                                    className="flex items-center gap-2 border-[0.8px] border-[rgba(0,0,0,0.8)] bg-white hover:bg-gray-50 text-sm text-black font-medium px-4 py-2 rounded-md shadow-sm transition-colors"
-                                  >
-                                    {selectedGradeFilter}
-                                    <svg
-                                      className={`w-3.5 h-3.5 text-black transition-transform ${
-                                        showGradeDropdown
-                                          ? 'rotate-0'
-                                          : 'rotate-180'
-                                      }`}
-                                      fill="none"
-                                      stroke="currentColor"
-                                      viewBox="0 0 24 24"
-                                    >
-                                      <path
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth={2}
-                                        d="M19 9l-7 7-7-7"
-                                      />
-                                    </svg>
-                                  </button>
-                                  {showGradeDropdown && (
-                                    <div className="absolute top-full right-0 mt-2 w-48 bg-white border-[0.8px] border-[rgba(0,0,0,0.8)] rounded-md shadow-lg z-10">
-                                      {gradeFilterOptions.map(option => (
-                                        <button
-                                          key={option}
-                                          onClick={() =>
-                                            handleGradeFilterSelect(option)
-                                          }
-                                          className={`w-full text-left px-4 py-2 text-sm text-black hover:bg-gray-50 transition-colors ${
-                                            selectedGradeFilter === option
-                                              ? 'bg-gray-100 font-medium text-black'
-                                              : 'text-black'
-                                          }`}
-                                          style={{ color: '#000000' }}
-                                        >
-                                          {option}
-                                        </button>
-                                      ))}
-                                    </div>
-                                  )}
-                                </div>
-                              </div>
-                            </div>
-
-                          </div>
-
-                          {/* Analytics Content */}
-                          {logsView === 'analytics' && (
-                            <div className="px-4 pb-4">
-                              {/* Charts Section */}
-                              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                                {/* Score Distribution Chart */}
-                                <div className="bg-white border border-gray-200 rounded-lg p-4">
-                                  <h3 className="text-sm font-medium text-black mb-3">
-                                    Score Distribution
-                                  </h3>
-
-                                  {/* Chart Container */}
-                                  <div className="relative">
-                                    {/* Y-axis labels */}
-                                    <div className="absolute left-0 h-40 flex flex-col justify-between text-xs text-gray-500 py-1">
-                                      <span>60</span>
-                                      <span>45</span>
-                                      <span>30</span>
-                                      <span>15</span>
-                                      <span>0</span>
-                                    </div>
-
-                                    {/* Chart area */}
-                                    <div className="ml-6 relative">
-                                      {/* Grid lines */}
-                                      <div className="absolute inset-0 flex flex-col justify-between">
-                                        {[...Array(5)].map((_, i) => (
-                                          <div
-                                            key={i}
-                                            className="border-t border-gray-100"
-                                          ></div>
-                                        ))}
-                                      </div>
-
-                                      {/* Bars */}
-                                      <div className="flex items-end justify-between h-40 px-2">
-                                        <div className="flex flex-col items-center">
-                                          <div
-                                            className="bg-gray-600 w-8 rounded-t mb-1"
-                                            style={{ height: '33px' }}
-                                          ></div>
-                                          <span className="text-[10px] text-gray-600">
-                                            90-100
-                                          </span>
-                                        </div>
-                                        <div className="flex flex-col items-center">
-                                          <div
-                                            className="bg-gray-600 w-8 rounded-t mb-1"
-                                            style={{ height: '54px' }}
-                                          ></div>
-                                          <span className="text-[10px] text-gray-600">
-                                            80-89
-                                          </span>
-                                        </div>
-                                        <div className="flex flex-col items-center">
-                                          <div
-                                            className="bg-gray-600 w-8 rounded-t mb-1"
-                                            style={{ height: '143px' }}
-                                          ></div>
-                                          <span className="text-[10px] text-gray-600">
-                                            70-79
-                                          </span>
-                                        </div>
-                                        <div className="flex flex-col items-center">
-                                          <div
-                                            className="bg-gray-600 w-8 rounded-t mb-1"
-                                            style={{ height: '20px' }}
-                                          ></div>
-                                          <span className="text-[10px] text-gray-600">
-                                            60-69
-                                          </span>
-                                        </div>
-                                        <div className="flex flex-col items-center">
-                                          <div
-                                            className="bg-gray-600 w-8 rounded-t mb-1"
-                                            style={{ height: '10px' }}
-                                          ></div>
-                                          <span className="text-[10px] text-gray-600">
-                                            50-59
-                                          </span>
-                                        </div>
-                                        <div className="flex flex-col items-center">
-                                          <div
-                                            className="bg-gray-600 w-8 rounded-t mb-1"
-                                            style={{ height: '5px' }}
-                                          ></div>
-                                          <span className="text-[10px] text-gray-600">
-                                            40-49
-                                          </span>
-                                        </div>
-                                      </div>
-                                    </div>
-                                  </div>
-                                </div>
-
-                                {/* Average Performance by Criteria */}
-                                <div className="bg-white border border-gray-200 rounded-lg p-4">
-                                  <h3 className="text-sm font-medium text-black mb-3">
-                                    Average Performance by Criteria
-                                  </h3>
-
-                                  <div className="space-y-2">
-                                    {/* Technical Skills */}
-                                    <div className="flex items-center justify-between">
-                                      <span className="text-xs text-black w-24">
-                                        Technical Skills
-                                      </span>
-                                      <div className="flex-1 mx-3">
-                                        <div className="bg-gray-100 h-2 rounded">
-                                          <div
-                                            className="bg-gray-500 h-2 rounded"
-                                            style={{ width: '84.3%' }}
-                                          ></div>
-                                        </div>
-                                      </div>
-                                      <span className="text-xs text-gray-500 w-12 text-right">
-                                        84.3%
-                                      </span>
-                                    </div>
-
-                                    {/* Communication */}
-                                    <div className="flex items-center justify-between">
-                                      <span className="text-xs text-black w-24">
-                                        Communication
-                                      </span>
-                                      <div className="flex-1 mx-3">
-                                        <div className="bg-gray-100 h-2 rounded">
-                                          <div
-                                            className="bg-gray-500 h-2 rounded"
-                                            style={{ width: '86.2%' }}
-                                          ></div>
-                                        </div>
-                                      </div>
-                                      <span className="text-xs text-gray-500 w-12 text-right">
-                                        86.2%
-                                      </span>
-                                    </div>
-
-                                    {/* Academic Performance */}
-                                    <div className="flex items-center justify-between">
-                                      <span className="text-xs text-black w-24">
-                                        Academic
-                                      </span>
-                                      <div className="flex-1 mx-3">
-                                        <div className="bg-gray-100 h-2 rounded">
-                                          <div
-                                            className="bg-gray-500 h-2 rounded"
-                                            style={{ width: '83.1%' }}
-                                          ></div>
-                                        </div>
-                                      </div>
-                                      <span className="text-xs text-gray-500 w-12 text-right">
-                                        83.1%
-                                      </span>
-                                    </div>
-
-                                    {/* Work Experience */}
-                                    <div className="flex items-center justify-between">
-                                      <span className="text-xs text-black w-24">
-                                        Work Experience
-                                      </span>
-                                      <div className="flex-1 mx-3">
-                                        <div className="bg-gray-100 h-2 rounded">
-                                          <div
-                                            className="bg-gray-500 h-2 rounded"
-                                            style={{ width: '84.4%' }}
-                                          ></div>
-                                        </div>
-                                      </div>
-                                      <span className="text-xs text-gray-500 w-12 text-right">
-                                        84.4%
-                                      </span>
-                                    </div>
-
-                                    {/* Cultural Fit */}
-                                    <div className="flex items-center justify-between">
-                                      <span className="text-xs text-black w-24">
-                                        Cultural Fit
-                                      </span>
-                                      <div className="flex-1 mx-3">
-                                        <div className="bg-gray-100 h-2 rounded">
-                                          <div
-                                            className="bg-gray-500 h-2 rounded"
-                                            style={{ width: '85.0%' }}
-                                          ></div>
-                                        </div>
-                                      </div>
-                                      <span className="text-xs text-gray-500 w-12 text-right">
-                                        85.0%
-                                      </span>
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          )}
-
-                          {/* Email Analytics Content */}
-                          {logsView === 'email-analytics' && (
-                            <div className="px-6 pb-6">
-                              {/* Campaign Overview Cards */}
-                              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-                                <div className="bg-white border border-gray-200 rounded-lg p-4">
-                                  <h3 className="text-xs text-gray-600 mb-2">Total Emails Sent</h3>
-                                  <div className="text-2xl font-light text-black">248</div>
-                                  <div className="text-xs text-gray-500 mt-1">+15% from last campaign</div>
-                                </div>
-                                
-                                <div className="bg-white border border-gray-200 rounded-lg p-4">
-                                  <h3 className="text-xs text-gray-600 mb-2">Delivered</h3>
-                                  <div className="text-2xl font-light text-black">242</div>
-                                  <div className="text-xs text-gray-500 mt-1">97.6% delivery rate</div>
-                                </div>
-                                
-                                <div className="bg-white border border-gray-200 rounded-lg p-4">
-                                  <h3 className="text-xs text-gray-600 mb-2">Opened</h3>
-                                  <div className="text-2xl font-light text-black">186</div>
-                                  <div className="text-xs text-gray-500 mt-1">76.9% open rate</div>
-                                </div>
-                                
-                                <div className="bg-white border border-gray-200 rounded-lg p-4">
-                                  <h3 className="text-xs text-gray-600 mb-2">Clicked</h3>
-                                  <div className="text-2xl font-light text-black">94</div>
-                                  <div className="text-xs text-gray-500 mt-1">50.5% click rate</div>
-                                </div>
-                              </div>
-
-                              {/* Charts Section */}
-                              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-                                {/* Email Performance Chart */}
-                                <div className="bg-white border border-gray-200 rounded-lg p-4">
-                                  <h3 className="text-sm font-medium text-black mb-4">Email Performance Over Time</h3>
-                                  <div className="relative">
-                                    {/* Y-axis labels */}
-                                    <div className="absolute left-0 h-48 flex flex-col justify-between text-xs text-gray-500 py-1">
-                                      <span>100</span>
-                                      <span>75</span>
-                                      <span>50</span>
-                                      <span>25</span>
-                                      <span>0</span>
-                                    </div>
-
-                                    {/* Chart area */}
-                                    <div className="ml-8 relative">
-                                      {/* Grid lines */}
-                                      <div className="absolute inset-0 flex flex-col justify-between">
-                                        {[...Array(5)].map((_, i) => (
-                                          <div key={i} className="border-t border-gray-100"></div>
-                                        ))}
-                                      </div>
-
-                                      {/* Line Chart */}
-                                      <div className="h-48 relative">
-                                        <svg className="w-full h-full" viewBox="0 0 300 190">
-                                          {/* Sent line */}
-                                          <polyline
-                                            fill="none"
-                                            stroke="#4B5563"
-                                            strokeWidth="2"
-                                            points="10,30 60,25 110,35 160,28 210,20 260,15"
-                                          />
-                                          {/* Opened line */}
-                                          <polyline
-                                            fill="none"
-                                            stroke="#6B7280"
-                                            strokeWidth="2"
-                                            strokeDasharray="5,5"
-                                            points="10,80 60,70 110,85 160,75 210,65 260,60"
-                                          />
-                                          {/* Clicked line */}
-                                          <polyline
-                                            fill="none"
-                                            stroke="#9CA3AF"
-                                            strokeWidth="2"
-                                            strokeDasharray="2,3"
-                                            points="10,130 60,125 110,140 160,135 210,125 260,120"
-                                          />
-                                        </svg>
-                                      </div>
-
-                                      {/* X-axis labels */}
-                                      <div className="flex justify-between text-xs text-gray-500 mt-2">
-                                        <span>Day 1</span>
-                                        <span>Day 2</span>
-                                        <span>Day 3</span>
-                                        <span>Day 4</span>
-                                        <span>Day 5</span>
-                                        <span>Day 6</span>
-                                      </div>
-                                    </div>
-                                  </div>
-
-                                  {/* Legend */}
-                                  <div className="flex gap-4 mt-4 text-xs">
-                                    <div className="flex items-center gap-2">
-                                      <div className="w-3 h-0.5 bg-gray-600"></div>
-                                      <span className="text-gray-600">Sent</span>
-                                    </div>
-                                    <div className="flex items-center gap-2">
-                                      <div className="w-3 h-0.5 bg-gray-500 border-dashed border-t"></div>
-                                      <span className="text-gray-600">Opened</span>
-                                    </div>
-                                    <div className="flex items-center gap-2">
-                                      <div className="w-3 h-0.5 bg-gray-400"></div>
-                                      <span className="text-gray-600">Clicked</span>
-                                    </div>
-                                  </div>
-                                </div>
-
-                                {/* Email Types Breakdown */}
-                                <div className="bg-white border border-gray-200 rounded-lg p-4">
-                                  <h3 className="text-sm font-medium text-black mb-4">Campaign Breakdown</h3>
-                                  
-                                  <div className="space-y-4">
-                                    {/* Acceptance Emails */}
-                                    <div>
-                                      <div className="flex justify-between text-sm mb-2">
-                                        <span className="text-black">Acceptance Emails</span>
-                                        <span className="text-gray-500">102 sent</span>
-                                      </div>
-                                      <div className="bg-gray-100 h-2 rounded">
-                                        <div className="bg-gray-600 h-2 rounded" style={{ width: '85.2%' }}></div>
-                                      </div>
-                                      <div className="text-xs text-gray-500 mt-1">85.2% open rate</div>
-                                    </div>
-
-                                    {/* Rejection Emails */}
-                                    <div>
-                                      <div className="flex justify-between text-sm mb-2">
-                                        <span className="text-black">Rejection Emails</span>
-                                        <span className="text-gray-500">146 sent</span>
-                                      </div>
-                                      <div className="bg-gray-100 h-2 rounded">
-                                        <div className="bg-gray-500 h-2 rounded" style={{ width: '71.4%' }}></div>
-                                      </div>
-                                      <div className="text-xs text-gray-500 mt-1">71.4% open rate</div>
-                                    </div>
-
-                                    {/* Delivery Status */}
-                                    <div className="pt-2 border-t border-gray-100">
-                                      <h4 className="text-sm font-medium text-black mb-2">Delivery Status</h4>
-                                      <div className="space-y-2">
-                                        <div className="flex justify-between text-xs">
-                                          <span className="text-gray-600">Delivered</span>
-                                          <span className="text-black">242 (97.6%)</span>
-                                        </div>
-                                        <div className="flex justify-between text-xs">
-                                          <span className="text-gray-600">Bounced</span>
-                                          <span className="text-black">4 (1.6%)</span>
-                                        </div>
-                                        <div className="flex justify-between text-xs">
-                                          <span className="text-gray-600">Failed</span>
-                                          <span className="text-black">2 (0.8%)</span>
-                                        </div>
-                                      </div>
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-
-                              {/* Email Logs Table */}
-                              <div className="bg-white border border-gray-200 rounded-lg">
-                                <div className="p-4 border-b border-gray-200">
-                                  <h3 className="text-sm font-medium text-black">Recent Email Activity</h3>
-                                </div>
-                                
-                                <div className="overflow-x-auto">
-                                  <table className="w-full">
-                                    <thead className="bg-gray-50">
-                                      <tr>
-                                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-600">Recipient</th>
-                                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-600">Email Type</th>
-                                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-600">Status</th>
-                                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-600">Sent</th>
-                                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-600">Opened</th>
-                                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-600">Clicked</th>
-                                      </tr>
-                                    </thead>
-                                    <tbody className="divide-y divide-gray-200">
-                                      <tr>
-                                        <td className="px-4 py-3 text-sm text-black">Sanjana Mehta</td>
-                                        <td className="px-4 py-3 text-sm text-gray-600">Acceptance</td>
-                                        <td className="px-4 py-3">
-                                          <span className="inline-flex px-2 py-1 text-xs font-medium bg-gray-100 text-gray-800 rounded">
-                                            Delivered
-                                          </span>
-                                        </td>
-                                        <td className="px-4 py-3 text-sm text-gray-600">2 hours ago</td>
-                                        <td className="px-4 py-3 text-sm text-gray-600">45 min ago</td>
-                                        <td className="px-4 py-3 text-sm text-gray-600">42 min ago</td>
-                                      </tr>
-                                      <tr>
-                                        <td className="px-4 py-3 text-sm text-black">Rohan Varma</td>
-                                        <td className="px-4 py-3 text-sm text-gray-600">Acceptance</td>
-                                        <td className="px-4 py-3">
-                                          <span className="inline-flex px-2 py-1 text-xs font-medium bg-gray-100 text-gray-800 rounded">
-                                            Delivered
-                                          </span>
-                                        </td>
-                                        <td className="px-4 py-3 text-sm text-gray-600">2 hours ago</td>
-                                        <td className="px-4 py-3 text-sm text-gray-600">1 hour ago</td>
-                                        <td className="px-4 py-3 text-sm text-gray-500">-</td>
-                                      </tr>
-                                      <tr>
-                                        <td className="px-4 py-3 text-sm text-black">Priya Sinha</td>
-                                        <td className="px-4 py-3 text-sm text-gray-600">Rejection</td>
-                                        <td className="px-4 py-3">
-                                          <span className="inline-flex px-2 py-1 text-xs font-medium bg-gray-100 text-gray-800 rounded">
-                                            Delivered
-                                          </span>
-                                        </td>
-                                        <td className="px-4 py-3 text-sm text-gray-600">3 hours ago</td>
-                                        <td className="px-4 py-3 text-sm text-gray-600">2 hours ago</td>
-                                        <td className="px-4 py-3 text-sm text-gray-500">-</td>
-                                      </tr>
-                                      <tr>
-                                        <td className="px-4 py-3 text-sm text-black">Neha Sharma</td>
-                                        <td className="px-4 py-3 text-sm text-gray-600">Rejection</td>
-                                        <td className="px-4 py-3">
-                                          <span className="inline-flex px-2 py-1 text-xs font-medium bg-gray-200 text-gray-600 rounded">
-                                            Bounced
-                                          </span>
-                                        </td>
-                                        <td className="px-4 py-3 text-sm text-gray-600">3 hours ago</td>
-                                        <td className="px-4 py-3 text-sm text-gray-500">-</td>
-                                        <td className="px-4 py-3 text-sm text-gray-500">-</td>
-                                      </tr>
-                                      <tr>
-                                        <td className="px-4 py-3 text-sm text-black">Alina Das</td>
-                                        <td className="px-4 py-3 text-sm text-gray-600">Acceptance</td>
-                                        <td className="px-4 py-3">
-                                          <span className="inline-flex px-2 py-1 text-xs font-medium bg-gray-100 text-gray-800 rounded">
-                                            Delivered
-                                          </span>
-                                        </td>
-                                        <td className="px-4 py-3 text-sm text-gray-600">4 hours ago</td>
-                                        <td className="px-4 py-3 text-sm text-gray-500">Not opened</td>
-                                        <td className="px-4 py-3 text-sm text-gray-500">-</td>
-                                      </tr>
-                                    </tbody>
-                                  </table>
-                                </div>
-                              </div>
-                            </div>
-                          )}
-
-                          {/* Results List */}
-                          {logsView === 'results' && (
-                            <div className="px-6 pb-6 space-y-3">
-                              {/* Result Entry 1 - Sanjana Mehta */}
-                              <div 
-                                className="bg-white border-[0.4px] border-[rgba(0,0,0,0.4)] rounded-lg p-4 cursor-pointer hover:shadow-md transition-shadow"
-                                onClick={() => handleResultClick('Sanjana Mehta')}
-                              >
-                                <div className="flex items-center justify-between">
-                                  <div className="flex items-center gap-3">
-                                    <div className="w-6 h-6 bg-gray-300 rounded-full flex items-center justify-center text-sm text-black font-medium">
-                                      1
-                                    </div>
-                                    <div>
-                                      <div className="font-medium text-sm text-black mb-2">
-                                        Sanjana Mehta
-                                      </div>
-                                      <div className="flex flex-wrap gap-2">
-                                        <span className="bg-[#e5e7eb] px-2 py-1 rounded text-xs text-[rgba(0,0,0,0.8)]">
-                                          Technical Skills: Excellent
-                                        </span>
-                                        <span className="bg-[#e5e7eb] px-2 py-1 rounded text-xs text-[rgba(0,0,0,0.8)]">
-                                          Communication: Excellent
-                                        </span>
-                                        <span className="bg-[#e5e7eb] px-2 py-1 rounded text-xs text-[rgba(0,0,0,0.8)]">
-                                          Academic Performance: Excellent
-                                        </span>
-                                        <span className="bg-[#e5e7eb] px-2 py-1 rounded text-xs text-[rgba(0,0,0,0.8)]">
-                                          Work Experience: Good
-                                        </span>
-                                      </div>
-                                    </div>
-                                  </div>
-                                  <div className="text-right">
-                                    <div className="text-xl font-semibold text-black">
-                                      92%
-                                    </div>
-                                    <div className="text-xs text-[rgba(0,0,0,0.6)] mt-1">
-                                      Excellent
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-
-                              {/* Result Entry 2 - Rohan Varma */}
-                              <div className="bg-white border-[0.4px] border-[rgba(0,0,0,0.4)] rounded-lg p-4">
-                                <div className="flex items-center justify-between">
-                                  <div className="flex items-center gap-3">
-                                    <div className="w-6 h-6 bg-gray-300 rounded-full flex items-center justify-center text-sm text-black font-medium">
-                                      2
-                                    </div>
-                                    <div>
-                                      <div className="font-medium text-sm text-black mb-2">
-                                        Rohan Varma
-                                      </div>
-                                      <div className="flex flex-wrap gap-2">
-                                        <span className="bg-[#e5e7eb] px-2 py-1 rounded text-xs text-[rgba(0,0,0,0.8)]">
-                                          Technical Skills: Excellent
-                                        </span>
-                                        <span className="bg-[#e5e7eb] px-2 py-1 rounded text-xs text-[rgba(0,0,0,0.8)]">
-                                          Communication: Excellent
-                                        </span>
-                                        <span className="bg-[#e5e7eb] px-2 py-1 rounded text-xs text-[rgba(0,0,0,0.8)]">
-                                          Academic Performance: Excellent
-                                        </span>
-                                        <span className="bg-[#e5e7eb] px-2 py-1 rounded text-xs text-[rgba(0,0,0,0.8)]">
-                                          Work Experience: Good
-                                        </span>
-                                      </div>
-                                    </div>
-                                  </div>
-                                  <div className="text-right">
-                                    <div className="text-xl font-semibold text-black">
-                                      87%
-                                    </div>
-                                    <div className="text-xs text-[rgba(0,0,0,0.6)] mt-1">
-                                      Good
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-
-                              {/* Result Entry 3 - Alina Das */}
-                              <div className="bg-white border-[0.4px] border-[rgba(0,0,0,0.4)] rounded-lg p-4">
-                                <div className="flex items-center justify-between">
-                                  <div className="flex items-center gap-3">
-                                    <div className="w-6 h-6 bg-gray-300 rounded-full flex items-center justify-center text-sm text-black font-medium">
-                                      3
-                                    </div>
-                                    <div>
-                                      <div className="font-medium text-sm text-black mb-2">
-                                        Alina Das
-                                      </div>
-                                      <div className="flex flex-wrap gap-2">
-                                        <span className="bg-[#e5e7eb] px-2 py-1 rounded text-xs text-[rgba(0,0,0,0.8)]">
-                                          Technical Skills: Excellent
-                                        </span>
-                                        <span className="bg-[#e5e7eb] px-2 py-1 rounded text-xs text-[rgba(0,0,0,0.8)]">
-                                          Communication: Excellent
-                                        </span>
-                                        <span className="bg-[#e5e7eb] px-2 py-1 rounded text-xs text-[rgba(0,0,0,0.8)]">
-                                          Academic Performance: Excellent
-                                        </span>
-                                        <span className="bg-[#e5e7eb] px-2 py-1 rounded text-xs text-[rgba(0,0,0,0.8)]">
-                                          Work Experience: Good
-                                        </span>
-                                      </div>
-                                    </div>
-                                  </div>
-                                  <div className="text-right">
-                                    <div className="text-xl font-semibold text-black">
-                                      86%
-                                    </div>
-                                    <div className="text-xs text-[rgba(0,0,0,0.6)] mt-1">
-                                      Good
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-
-                              {/* Result Entry 4 - Amit Rajan */}
-                              <div className="bg-white border-[0.4px] border-[rgba(0,0,0,0.4)] rounded-lg p-4">
-                                <div className="flex items-center justify-between">
-                                  <div className="flex items-center gap-3">
-                                    <div className="w-6 h-6 bg-gray-300 rounded-full flex items-center justify-center text-sm text-black font-medium">
-                                      4
-                                    </div>
-                                    <div>
-                                      <div className="font-medium text-sm text-black mb-2">
-                                        Amit Rajan
-                                      </div>
-                                      <div className="flex flex-wrap gap-2">
-                                        <span className="bg-[#e5e7eb] px-2 py-1 rounded text-xs text-[rgba(0,0,0,0.8)]">
-                                          Technical Skills: Excellent
-                                        </span>
-                                        <span className="bg-[#e5e7eb] px-2 py-1 rounded text-xs text-[rgba(0,0,0,0.8)]">
-                                          Communication: Excellent
-                                        </span>
-                                        <span className="bg-[#e5e7eb] px-2 py-1 rounded text-xs text-[rgba(0,0,0,0.8)]">
-                                          Academic Performance: Excellent
-                                        </span>
-                                        <span className="bg-[#e5e7eb] px-2 py-1 rounded text-xs text-[rgba(0,0,0,0.8)]">
-                                          Work Experience: Good
-                                        </span>
-                                      </div>
-                                    </div>
-                                  </div>
-                                  <div className="text-right">
-                                    <div className="text-xl font-semibold text-black">
-                                      82%
-                                    </div>
-                                    <div className="text-xs text-[rgba(0,0,0,0.6)] mt-1">
-                                      Good
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-
-                              {/* Result Entry 5 - Priya Sinha */}
-                              <div className="bg-white border-[0.4px] border-[rgba(0,0,0,0.4)] rounded-lg p-4">
-                                <div className="flex items-center justify-between">
-                                  <div className="flex items-center gap-3">
-                                    <div className="w-6 h-6 bg-gray-300 rounded-full flex items-center justify-center text-sm text-black font-medium">
-                                      5
-                                    </div>
-                                    <div>
-                                      <div className="font-medium text-sm text-black mb-2">
-                                        Priya Sinha
-                                      </div>
-                                      <div className="flex flex-wrap gap-2">
-                                        <span className="bg-[#e5e7eb] px-2 py-1 rounded text-xs text-[rgba(0,0,0,0.8)]">
-                                          Technical Skills: Excellent
-                                        </span>
-                                        <span className="bg-[#e5e7eb] px-2 py-1 rounded text-xs text-[rgba(0,0,0,0.8)]">
-                                          Communication: Excellent
-                                        </span>
-                                        <span className="bg-[#e5e7eb] px-2 py-1 rounded text-xs text-[rgba(0,0,0,0.8)]">
-                                          Academic Performance: Excellent
-                                        </span>
-                                        <span className="bg-[#e5e7eb] px-2 py-1 rounded text-xs text-[rgba(0,0,0,0.8)]">
-                                          Work Experience: Good
-                                        </span>
-                                      </div>
-                                    </div>
-                                  </div>
-                                  <div className="text-right">
-                                    <div className="text-xl font-semibold text-black">
-                                      70%
-                                    </div>
-                                    <div className="text-xs text-[rgba(0,0,0,0.6)] mt-1">
-                                      Good
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          )}
-                        </div>
                       </div>
                     </TabsContent>
                   </Tabs>
@@ -2254,581 +1743,6 @@ export default function UploadDataPage() {
           </div>
         </div>
       </div>
-
-      {/* Detailed Result Modal */}
-      {showDetailModal && selectedResult ? (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-[10px] border-[0.8px] border-[rgba(0,0,0,0.2)] max-w-4xl w-full max-h-[90vh] overflow-y-auto">
-            {/* Modal Header */}
-            <div className="p-6 border-b border-gray-200 flex items-center justify-between">
-              <div className="flex items-center gap-4">
-                <button
-                  onClick={handleCloseDetail}
-                  className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-                >
-                  <svg
-                    className="w-5 h-5 text-gray-600"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M15 19l-7-7 7-7"
-                    />
-                  </svg>
-                </button>
-                <div>
-                  <h2 className="text-xl font-medium text-black">
-                    {selectedResult.name}
-                  </h2>
-                  <p className="text-sm text-[rgba(0,0,0,0.6)]">
-                    {selectedResult.email}
-                  </p>
-                </div>
-              </div>
-              <button
-                onClick={handleCloseDetail}
-                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-              >
-                <svg
-                  className="w-5 h-5 text-gray-600"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg>
-              </button>
-            </div>
-
-            {/* Modal Content */}
-            <div className="p-6">
-              <div className="mb-6">
-                <h3 className="text-lg font-medium text-black mb-4">
-                  Evaluation Results
-                </h3>
-
-                {/* Criteria Table */}
-                <div className="bg-[#f9f9f9] rounded-lg overflow-hidden mb-6">
-                  <table className="w-full">
-                    <thead>
-                      <tr className="bg-[#eeeeee]">
-                        <th className="text-left p-4 text-sm font-medium text-[rgba(0,0,0,0.8)]">
-                          Criteria
-                        </th>
-                        <th className="text-left p-4 text-sm font-medium text-[rgba(0,0,0,0.8)]">
-                          Description
-                        </th>
-                        <th className="text-right p-4 text-sm font-medium text-[rgba(0,0,0,0.8)]">
-                          Points
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {selectedResult.criteria.map((criterion, index) => (
-                        <tr
-                          key={index}
-                          className="border-t border-[rgba(0,0,0,0.1)]"
-                        >
-                          <td className="p-4 text-sm text-black font-medium">
-                            {criterion.name}
-                          </td>
-                          <td className="p-4 text-sm text-black">
-                            {criterion.description}
-                          </td>
-                          <td className="p-4 text-sm text-black font-medium text-right">
-                            {criterion.points}
-                          </td>
-                        </tr>
-                      ))}
-                      <tr className="border-t-2 border-[rgba(0,0,0,0.2)] bg-[#f2f2f2]">
-                        <td className="p-4 text-sm font-medium text-black">
-                          TOTAL
-                        </td>
-                        <td className="p-4"></td>
-                        <td className="p-4 text-sm font-medium text-black text-right">
-                          {selectedResult.totalScore}/100
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-
-                {/* Score and Grade */}
-                <div className="grid grid-cols-2 gap-6 mb-6">
-                  <div className="text-center">
-                    <div className="text-4xl font-light text-black mb-2">
-                      {selectedResult.totalScore}%
-                    </div>
-                    <div className="text-sm text-[rgba(0,0,0,0.6)]">
-                      Overall Score
-                    </div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-2xl font-medium text-black mb-2">
-                      {selectedResult.grade}
-                    </div>
-                    <div className="text-sm text-[rgba(0,0,0,0.6)]">Grade</div>
-                  </div>
-                </div>
-
-                {/* Key Strengths */}
-                <div>
-                  <h4 className="text-base font-medium text-black mb-3">
-                    Key Strengths
-                  </h4>
-                  <ul className="space-y-2">
-                    {selectedResult.keyStrengths.map((strength, index) => (
-                      <li key={index} className="flex items-start gap-2">
-                        <span className="w-1.5 h-1.5 bg-black rounded-full mt-2 flex-shrink-0"></span>
-                        <span className="text-sm text-black">{strength}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      ) : null}
-
-      {/* Email Campaign Modal */}
-      {showEmailCampaign && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
-            {/* Modal Header */}
-            <div className="p-6 border-b border-gray-200 flex items-center justify-between">
-              <h2 className="text-xl font-medium text-black">Email Campaign</h2>
-              <button
-                onClick={() => setShowEmailCampaign(false)}
-                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-              >
-                <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-            </div>
-
-            {/* Modal Content */}
-            <div className="p-6">
-              {/* Email Type Selection */}
-              <div className="mb-6">
-                <label className="text-sm font-medium text-black mb-3 block">Email Type</label>
-                <div className="flex gap-4">
-                  <label className="flex items-center gap-2 cursor-pointer">
-                    <input
-                      type="radio"
-                      name="emailType"
-                      value="acceptance"
-                      checked={emailType === 'acceptance'}
-                      onChange={(e) => setEmailType(e.target.value as 'acceptance' | 'rejection')}
-                      className="w-4 h-4 border-gray-300 text-black focus:ring-gray-400 focus:ring-2"
-                    />
-                    <span className="text-sm text-black">Acceptance Email</span>
-                  </label>
-                  <label className="flex items-center gap-2 cursor-pointer">
-                    <input
-                      type="radio"
-                      name="emailType"
-                      value="rejection"
-                      checked={emailType === 'rejection'}
-                      onChange={(e) => setEmailType(e.target.value as 'acceptance' | 'rejection')}
-                      className="w-4 h-4 border-gray-300 text-black focus:ring-gray-400 focus:ring-2"
-                    />
-                    <span className="text-sm text-black">Rejection Email</span>
-                  </label>
-                </div>
-              </div>
-
-              {/* Filter Tabs */}
-              <div className="mb-6">
-                <div className="flex gap-1 bg-gray-100 p-1 rounded-lg w-fit">
-                  <button
-                    onClick={() => setCandidateFilter('all')}
-                    className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                      candidateFilter === 'all'
-                        ? 'bg-white shadow-sm text-black'
-                        : 'text-gray-600 hover:bg-gray-50'
-                    }`}
-                  >
-                    All Candidates ({allCandidatesData.length})
-                  </button>
-                  <button
-                    onClick={() => setCandidateFilter('qualified')}
-                    className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                      candidateFilter === 'qualified'
-                        ? 'bg-white shadow-sm text-black'
-                        : 'text-gray-600 hover:bg-gray-50'
-                    }`}
-                  >
-                    Qualified ({allCandidatesData.filter(c => c.qualified).length})
-                  </button>
-                  <button
-                    onClick={() => setCandidateFilter('disqualified')}
-                    className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                      candidateFilter === 'disqualified'
-                        ? 'bg-white shadow-sm text-black'
-                        : 'text-gray-600 hover:bg-gray-50'
-                    }`}
-                  >
-                    Disqualified ({allCandidatesData.filter(c => !c.qualified).length})
-                  </button>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                {/* Candidate Selection */}
-                <div>
-                  <div className="flex items-center justify-between mb-3">
-                    <label className="text-sm font-medium text-black">
-                      Select Candidates ({selectedCandidates.length} selected)
-                    </label>
-                    <div className="flex gap-2">
-                      <button
-                        onClick={handleSelectQualified}
-                        className="text-xs text-gray-600 hover:text-gray-800 underline"
-                      >
-                        All Qualified
-                      </button>
-                      <button
-                        onClick={handleSelectDisqualified}
-                        className="text-xs text-gray-600 hover:text-gray-800 underline"
-                      >
-                        All Disqualified
-                      </button>
-                      <button
-                        onClick={handleSelectAll}
-                        className="text-xs text-gray-600 hover:text-gray-800 underline"
-                      >
-                        Select All
-                      </button>
-                      <button
-                        onClick={handleDeselectAll}
-                        className="text-xs text-gray-500 hover:text-gray-700 underline"
-                      >
-                        Clear
-                      </button>
-                    </div>
-                  </div>
-                  
-                  <div className="bg-gray-50 rounded-lg p-4 space-y-3 max-h-80 overflow-y-auto">
-                    {getFilteredCandidates().map((candidate, index) => (
-                      <label key={candidate.name} className="flex items-center gap-3 p-2 hover:bg-gray-100 rounded-md">
-                        <input
-                          type="checkbox"
-                          checked={selectedCandidates.includes(candidate.name)}
-                          onChange={() => handleCandidateSelect(candidate.name)}
-                          className="w-4 h-4 border-gray-300 text-black focus:ring-gray-400 focus:ring-2 rounded"
-                        />
-                        <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-medium ${
-                          candidate.qualified ? 'bg-gray-200 text-gray-800' : 'bg-gray-300 text-gray-700'
-                        }`}>
-                          {candidateFilter === 'all' ? 
-                            allCandidatesData.findIndex(c => c.name === candidate.name) + 1 : 
-                            index + 1
-                          }
-                        </div>
-                        <div className="flex-1">
-                          <div className="text-sm text-black font-medium">{candidate.name}</div>
-                          <div className="text-xs text-gray-500">{candidate.email}</div>
-                        </div>
-                        <div className="text-right">
-                          <div className="text-sm font-medium text-black">
-                            {candidate.score}%
-                          </div>
-                          <div className="text-xs text-gray-500">{candidate.grade}</div>
-                          <div className={`text-xs font-medium ${
-                            candidate.qualified ? 'text-gray-700' : 'text-gray-600'
-                          }`}>
-                            {candidate.qualified ? 'QUALIFIED' : 'DISQUALIFIED'}
-                          </div>
-                        </div>
-                      </label>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Email Preview */}
-                <div>
-                  <label className="text-sm font-medium text-black mb-3 block">Email Preview</label>
-                  <div className="bg-gray-50 rounded-lg p-4 border h-80 overflow-y-auto">
-                    {emailType === '' ? (
-                      <div className="flex items-center justify-center h-full">
-                        <div className="text-center text-gray-500">
-                          <p className="text-sm">Select an email type to preview the template</p>
-                        </div>
-                      </div>
-                    ) : (
-                      <>
-                        <div className="text-sm mb-4">
-                          <strong>Subject:</strong> {emailType === 'acceptance' ? 'Congratulations! Application Accepted' : 'Application Status Update'}
-                        </div>
-                        <div className="text-sm text-gray-700 space-y-3">
-                          {emailType === 'acceptance' ? (
-                        <>
-                          <p>Dear [Candidate Name],</p>
-                          <p>We are pleased to inform you that your application has been <strong>accepted</strong>. Your exceptional performance in our evaluation process has impressed our team.</p>
-                          <p><strong>Your Results:</strong></p>
-                          <ul className="list-disc list-inside ml-4 space-y-1">
-                            <li>Overall Score: [Score]%</li>
-                            <li>Grade: [Grade]</li>
-                            <li>Status: QUALIFIED</li>
-                          </ul>
-                          <p>We look forward to working with you and will be in touch soon with next steps.</p>
-                          <p>Congratulations once again!</p>
-                          <p>Best regards,<br/>The Evaluation Team</p>
-                        </>
-                      ) : (
-                        <>
-                          <p>Dear [Candidate Name],</p>
-                          <p>Thank you for your interest in our program and for taking the time to submit your application.</p>
-                          <p>After careful consideration, we have decided not to move forward with your application at this time.</p>
-                          <p><strong>Your Results:</strong></p>
-                          <ul className="list-disc list-inside ml-4 space-y-1">
-                            <li>Overall Score: [Score]%</li>
-                            <li>Grade: [Grade]</li>
-                            <li>Status: NOT QUALIFIED</li>
-                          </ul>
-                          <p><strong>Areas for Improvement:</strong></p>
-                          <ul className="list-disc list-inside ml-4 space-y-1">
-                            <li>Technical skills development</li>
-                            <li>Communication and presentation</li>
-                            <li>Experience in relevant domains</li>
-                          </ul>
-                          <p>We encourage you to continue developing your skills and consider reapplying in the future.</p>
-                          <p>Best regards,<br/>The Evaluation Team</p>
-                        </>
-                      )}
-                        </div>
-                      </>
-                    )}
-                  </div>
-                </div>
-              </div>
-
-              {/* Action Buttons */}
-              <div className="flex justify-end gap-3 mt-6">
-                <Button
-                  variant="outline"
-                  onClick={() => setShowEmailCampaign(false)}
-                  className="px-4 py-2 text-sm border border-gray-300 bg-transparent text-gray-700 hover:bg-gray-50"
-                >
-                  Cancel
-                </Button>
-                <Button
-                  onClick={handleSendEmails}
-                  className="px-4 py-2 text-sm bg-black text-white hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
-                  disabled={selectedCandidates.length === 0 || emailType === ''}
-                >
-                  Send {emailType === 'acceptance' ? 'Acceptance' : emailType === 'rejection' ? 'Rejection' : ''} Emails ({selectedCandidates.length})
-                </Button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Grading Progress Modal */}
-      {showGradingProgress && (
-        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 p-4">
-          <div className="bg-[#f9f9f9] rounded-[24px] max-w-[607px] w-full max-h-[90vh] overflow-y-auto relative">
-            {/* Close Button */}
-            <button
-              onClick={() => setShowGradingProgress(false)}
-              className="absolute top-6 right-6 p-2 hover:bg-gray-100 rounded-lg transition-colors z-10"
-            >
-              <svg
-                className="w-6 h-6 text-gray-600"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M6 18L18 6M6 6l12 12"
-                />
-              </svg>
-            </button>
-
-            {/* Header */}
-            <div className="p-6 pb-0">
-              <h2 className="text-2xl font-semibold text-black mb-6">
-                Grading Progress
-              </h2>
-
-              {/* Progress Section */}
-              <div className="bg-[#f2f2f2] rounded-2xl p-6 mb-6 border border-gray-300">
-                <div className="flex items-center justify-between mb-4">
-                  <div>
-                    <div className="flex items-center gap-3 mb-2">
-                      <div className="w-7 h-7 bg-white rounded-full flex items-center justify-center">
-                        <div
-                          className="w-4 h-4 bg-black rounded-full"
-                          style={{
-                            background: `conic-gradient(black ${
-                              gradingProgress.progress * 3.6
-                            }deg, #f2f2f2 0deg)`
-                          }}
-                        ></div>
-                      </div>
-                      <h3 className="text-base font-medium text-black">
-                        {gradingProgress.stage}
-                      </h3>
-                    </div>
-                    <p className="text-sm text-gray-800 mb-4">
-                      {gradingProgress.description}
-                    </p>
-                  </div>
-                  <div className="bg-white rounded-lg px-3 py-1">
-                    <span className="text-sm text-gray-800">
-                      {gradingProgress.progress}%
-                    </span>
-                  </div>
-                </div>
-
-                {/* Progress Bar */}
-                <div className="mb-4">
-                  <div className="bg-white h-3 rounded border border-gray-400">
-                    <div
-                      className="bg-black h-full rounded transition-all duration-300"
-                      style={{ width: `${gradingProgress.progress}%` }}
-                    ></div>
-                  </div>
-                </div>
-
-                {/* Progress Stats */}
-                <div className="flex justify-between text-sm text-gray-800">
-                  <span>
-                    <span className="text-gray-600">
-                      Applications Processed:{' '}
-                    </span>
-                    <span className="text-black">
-                      {gradingProgress.filesProcessed} /{' '}
-                      {gradingProgress.totalFiles}
-                    </span>
-                  </span>
-                  <span>
-                    <span className="text-gray-600">Remaining time: </span>
-                    <span className="text-black">
-                      {gradingProgress.timeRemaining}
-                    </span>
-                  </span>
-                </div>
-              </div>
-
-              {/* Stats Cards */}
-              <div className="grid grid-cols-3 gap-4 mb-6">
-                <div className="bg-white rounded-lg p-4 border border-gray-300">
-                  <div className="text-2xl font-normal text-black mb-1">
-                    {gradingProgress.filesProcessed}
-                  </div>
-                  <div className="text-sm text-gray-700">Files Processed</div>
-                </div>
-                <div className="bg-white rounded-lg p-4 border border-gray-300">
-                  <div className="text-2xl font-normal text-black mb-1">
-                    {gradingProgress.progress}%
-                  </div>
-                  <div className="text-sm text-gray-700">Progress</div>
-                </div>
-                <div className="bg-white rounded-lg p-4 border border-gray-300">
-                  <div className="text-2xl font-normal text-black mb-1">
-                    1 hr
-                  </div>
-                  <div className="text-sm text-gray-700">Time left</div>
-                </div>
-              </div>
-
-              {/* Notification Preferences */}
-              <div className="bg-white rounded-lg p-4 mb-6 border border-gray-300">
-                <div className="flex items-center gap-2 mb-4">
-                  <svg
-                    className="w-4 h-4 text-gray-600"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M15 17h5l-5 5v-5zM11 17H6l5 5v-5zM12 3v12"
-                    />
-                  </svg>
-                  <span className="text-base text-gray-700">
-                    Notification Preferences
-                  </span>
-                </div>
-
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-black">
-                      Email Notifications
-                    </span>
-                    <div className="w-6 h-3 bg-gray-400 rounded-full relative">
-                      <div className="w-3 h-3 bg-gray-200 rounded-full border border-gray-600"></div>
-                    </div>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-black">
-                      In-App Notification
-                    </span>
-                    <div className="w-6 h-3 bg-gray-400 rounded-full relative">
-                      <div className="w-3 h-3 bg-gray-200 rounded-full border border-gray-600"></div>
-                    </div>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-black">
-                      Push Notifications
-                    </span>
-                    <div className="w-6 h-3 bg-gray-400 rounded-full relative">
-                      <div className="w-3 h-3 bg-gray-200 rounded-full border border-gray-600"></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Action Buttons */}
-            <div className="p-6 pt-0 flex gap-4">
-              <button className="flex-1 flex items-center justify-center gap-2 bg-white border border-gray-400 text-gray-600 py-3 px-6 rounded-md hover:bg-gray-50 transition-colors">
-                <svg
-                  className="w-4 h-4"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                  />
-                </svg>
-                Processing
-              </button>
-              <button
-                onClick={() => {
-                  setShowGradingProgress(false);
-                  setActiveTab('logs');
-                }}
-                className="flex-1 bg-white border border-gray-400 text-black py-3 px-6 rounded-md hover:bg-gray-50 transition-colors"
-              >
-                Run in Background
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </>
   );
 }
