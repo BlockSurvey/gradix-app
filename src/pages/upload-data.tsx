@@ -138,6 +138,15 @@ export default function UploadDataPage() {
   const [selectedCandidateFilter, setSelectedCandidateFilter] = useState('All Candidates');
   const [selectedGradeFilter, setSelectedGradeFilter] = useState('All Grades');
   const [logsView, setLogsView] = useState<'results' | 'analytics'>('results');
+  const [showGradingProgress, setShowGradingProgress] = useState(false);
+  const [gradingProgress, setGradingProgress] = useState({
+    progress: 14,
+    filesProcessed: 22,
+    totalFiles: 500,
+    timeRemaining: '2 hours',
+    stage: 'Initializing AI Grader',
+    description: 'Setting up AI models and processing environment...'
+  });
   const candidateDropdownRef = useRef<HTMLDivElement>(null);
   const gradeDropdownRef = useRef<HTMLDivElement>(null);
 
@@ -238,6 +247,35 @@ export default function UploadDataPage() {
     document.getElementById('file-input')?.click();
   };
 
+  const handleTestWithSampleData = () => {
+    if (!formData) {
+      alert('Form data is missing');
+      return;
+    }
+    
+    // Determine which sample file to use based on agent type
+    let sampleFileName = '';
+    const agentName = formData.agentName.toLowerCase();
+    
+    if (agentName.includes('hackathon') || agentName.includes('ai/ml')) {
+      sampleFileName = 'ai-hackathon-projects.csv';
+    } else if (agentName.includes('founder') || agentName.includes('registration')) {
+      sampleFileName = 'ai-founder-registration.csv';
+    } else if (agentName.includes('startup') || agentName.includes('pitch')) {
+      sampleFileName = 'ai-startup-pitch.csv';
+    } else {
+      // Default to hackathon sample
+      sampleFileName = 'ai-hackathon-projects.csv';
+    }
+    
+    // Create a mock file object to simulate file selection
+    const sampleFile = new File(['sample data'], sampleFileName, { type: 'text/csv' });
+    setSelectedFile(sampleFile);
+    
+    // Show success message
+    alert(`Sample data loaded: ${sampleFileName}`);
+  };
+
   const handleCompleteSetup = () => {
     if (!selectedFile) {
       alert('Please select a file to upload');
@@ -249,24 +287,20 @@ export default function UploadDataPage() {
       return;
     }
     
-    // Create agent object
-    const newAgent = {
-      id: Date.now().toString(),
-      name: formData.agentName,
-      description: formData.rubricCriteria.substring(0, 100) + '...',
-      applicationType: formData.applicationType,
-      rubricCriteria: formData.rubricCriteria,
-      createdAt: new Date().toISOString(),
-      lastUsed: new Date().toISOString(),
-      gradedFiles: Math.floor(Math.random() * 5) + 1, // Random for demo
-      averageScore: Math.floor(Math.random() * 20) + 80, // Random score between 80-100
-    };
-
-    // Add to in-memory store
-    addAgent(newAgent);
+    // Show grading progress modal
+    setShowGradingProgress(true);
     
-    // Redirect to agents page
-    router.push('/agents');
+    // Simulate progress updates
+    setTimeout(() => {
+      setGradingProgress({
+        progress: 8,
+        filesProcessed: 22,
+        totalFiles: 500,
+        timeRemaining: '1 hr',
+        stage: 'Processing Applications',
+        description: 'Analyzing and grading submitted applications...'
+      });
+    }, 3000);
   };
 
   const handleBack = () => {
@@ -485,7 +519,7 @@ export default function UploadDataPage() {
                 icon={<SettingsIcon className="w-5 h-5 lg:w-6 lg:h-6" />}
                 label="Settings"
                 isActive={activeMenuItem === 'settings'}
-                onClick={() => setActiveMenuItem('settings')}
+                onClick={() => router.push('/settings')}
               />
             </nav>
           </div>
@@ -739,7 +773,7 @@ export default function UploadDataPage() {
                         </Card>
 
                         {/* Action Buttons */}
-                        <div className="flex justify-between pt-3">
+                        <div className="flex justify-between items-center pt-3">
                           <Button
                             variant="outline"
                             onClick={handleBack}
@@ -748,12 +782,22 @@ export default function UploadDataPage() {
                             Back
                           </Button>
                           
-                          <Button
-                            onClick={handleCompleteSetup}
-                            className="px-4 py-2 text-sm bg-black text-white hover:bg-gray-800"
-                          >
-                            Start Grading
-                          </Button>
+                          <div className="flex gap-3">
+                            <Button
+                              variant="outline"
+                              onClick={handleTestWithSampleData}
+                              className="px-4 py-2 text-sm border border-gray-300 bg-transparent text-gray-700 hover:bg-gray-50"
+                            >
+                              Test with Sample Data
+                            </Button>
+                            
+                            <Button
+                              onClick={handleCompleteSetup}
+                              className="px-4 py-2 text-sm bg-black text-white hover:bg-gray-800"
+                            >
+                              Start Grading
+                            </Button>
+                          </div>
                         </div>
 
                         {/* What happens next section */}
@@ -1341,6 +1385,136 @@ export default function UploadDataPage() {
           </div>
         </div>
       ) : null}
+
+      {/* Grading Progress Modal */}
+      {showGradingProgress && (
+        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 p-4">
+          <div className="bg-[#f9f9f9] rounded-[24px] max-w-[607px] w-full max-h-[90vh] overflow-y-auto relative">
+            {/* Close Button */}
+            <button 
+              onClick={() => setShowGradingProgress(false)}
+              className="absolute top-6 right-6 p-2 hover:bg-gray-100 rounded-lg transition-colors z-10"
+            >
+              <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+
+            {/* Header */}
+            <div className="p-6 pb-0">
+              <h2 className="text-2xl font-semibold text-black mb-6">Grading Progress</h2>
+              
+              {/* Progress Section */}
+              <div className="bg-[#f2f2f2] rounded-2xl p-6 mb-6 border border-gray-300">
+                <div className="flex items-center justify-between mb-4">
+                  <div>
+                    <div className="flex items-center gap-3 mb-2">
+                      <div className="w-7 h-7 bg-white rounded-full flex items-center justify-center">
+                        <div className="w-4 h-4 bg-black rounded-full" style={{
+                          background: `conic-gradient(black ${gradingProgress.progress * 3.6}deg, #f2f2f2 0deg)`
+                        }}></div>
+                      </div>
+                      <h3 className="text-base font-medium text-black">{gradingProgress.stage}</h3>
+                    </div>
+                    <p className="text-sm text-gray-800 mb-4">{gradingProgress.description}</p>
+                  </div>
+                  <div className="bg-white rounded-lg px-3 py-1">
+                    <span className="text-sm text-gray-800">{gradingProgress.progress}%</span>
+                  </div>
+                </div>
+                
+                {/* Progress Bar */}
+                <div className="mb-4">
+                  <div className="bg-white h-3 rounded border border-gray-400">
+                    <div 
+                      className="bg-black h-full rounded transition-all duration-300"
+                      style={{ width: `${gradingProgress.progress}%` }}
+                    ></div>
+                  </div>
+                </div>
+                
+                {/* Progress Stats */}
+                <div className="flex justify-between text-sm text-gray-800">
+                  <span>
+                    <span className="text-gray-600">Applications Processed: </span>
+                    <span className="text-black">{gradingProgress.filesProcessed} / {gradingProgress.totalFiles}</span>
+                  </span>
+                  <span>
+                    <span className="text-gray-600">Remaining time: </span>
+                    <span className="text-black">{gradingProgress.timeRemaining}</span>
+                  </span>
+                </div>
+              </div>
+              
+              {/* Stats Cards */}
+              <div className="grid grid-cols-3 gap-4 mb-6">
+                <div className="bg-white rounded-lg p-4 border border-gray-300">
+                  <div className="text-2xl font-normal text-black mb-1">{gradingProgress.filesProcessed}</div>
+                  <div className="text-sm text-gray-700">Files Processed</div>
+                </div>
+                <div className="bg-white rounded-lg p-4 border border-gray-300">
+                  <div className="text-2xl font-normal text-black mb-1">{gradingProgress.progress}%</div>
+                  <div className="text-sm text-gray-700">Progress</div>
+                </div>
+                <div className="bg-white rounded-lg p-4 border border-gray-300">
+                  <div className="text-2xl font-normal text-black mb-1">1 hr</div>
+                  <div className="text-sm text-gray-700">Time left</div>
+                </div>
+              </div>
+              
+              {/* Notification Preferences */}
+              <div className="bg-white rounded-lg p-4 mb-6 border border-gray-300">
+                <div className="flex items-center gap-2 mb-4">
+                  <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-5 5v-5zM11 17H6l5 5v-5zM12 3v12" />
+                  </svg>
+                  <span className="text-base text-gray-700">Notification Preferences</span>
+                </div>
+                
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-black">Email Notifications</span>
+                    <div className="w-6 h-3 bg-gray-400 rounded-full relative">
+                      <div className="w-3 h-3 bg-gray-200 rounded-full border border-gray-600"></div>
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-black">In-App Notification</span>
+                    <div className="w-6 h-3 bg-gray-400 rounded-full relative">
+                      <div className="w-3 h-3 bg-gray-200 rounded-full border border-gray-600"></div>
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-black">Push Notifications</span>
+                    <div className="w-6 h-3 bg-gray-400 rounded-full relative">
+                      <div className="w-3 h-3 bg-gray-200 rounded-full border border-gray-600"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            {/* Action Buttons */}
+            <div className="p-6 pt-0 flex gap-4">
+              <button className="flex-1 flex items-center justify-center gap-2 bg-white border border-gray-400 text-gray-600 py-3 px-6 rounded-md hover:bg-gray-50 transition-colors">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                Processing
+              </button>
+              <button 
+                onClick={() => {
+                  setShowGradingProgress(false);
+                  setActiveTab('logs');
+                }}
+                className="flex-1 bg-white border border-gray-400 text-black py-3 px-6 rounded-md hover:bg-gray-50 transition-colors"
+              >
+                Run in Background
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }

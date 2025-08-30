@@ -225,7 +225,7 @@ export default function AgentsPage() {
                 icon={<SettingsIcon className="w-5 h-5 lg:w-6 lg:h-6" />}
                 label="Settings"
                 isActive={activeMenuItem === 'settings'}
-                onClick={() => setActiveMenuItem('settings')}
+                onClick={() => router.push('/settings')}
               />
             </nav>
 

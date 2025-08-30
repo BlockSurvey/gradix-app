@@ -66,3 +66,45 @@ All commits trigger lint-staged which runs:
 - **Available Components**: Button, Dialog, Card, Badge, and other pre-configured components
 - **Customization**: Components can be customized via className props while maintaining accessibility
 - **Priority**: Always prefer shadcn/ui components over building custom ones when functionality matches
+
+## Design System Guidelines
+
+### Consistent Sidebar Pattern
+All pages use a standardized left sidebar with the following structure:
+- **Width**: `w-full lg:w-56` (responsive)
+- **Background**: `bg-[#efeded]` with `border-r border-gray-400`
+- **Header Section**: Contains GradixIcon and "gradix.ai" text with `font-medium` weight
+- **Navigation**: Uses SidebarItem components with consistent active states
+
+### Color Scheme
+- **Primary Background**: `bg-[#f9f9f9]` for main content areas
+- **Card Background**: `bg-white` with subtle borders
+- **Sidebar Background**: `bg-[#efeded]`
+- **Active States**: `bg-[rgba(179,173,173,0.4)]` for navigation
+- **Text Colors**: 
+  - Primary: `text-gray-600` for headers
+  - Secondary: `text-gray-700` for navigation
+  - Subtle: `text-gray-500` for icons
+
+### Typography Standards
+- **Main Headers**: `text-lg lg:text-xl font-medium text-gray-600`
+- **Brand Text**: `text-xl lg:text-2xl font-medium text-gray-500`
+- **Navigation Labels**: `font-medium text-sm lg:text-sm`
+- **Button Text**: `text-sm` with appropriate font weights
+
+### Component Standards
+- **Buttons**: Consistent padding `px-4 py-2` with `text-sm`
+- **Cards**: Use `border-[0.4px] border-[rgba(0,0,0,0.2)]` for subtle borders
+- **Input Fields**: Consistent height `h-10` or `h-11` with border styling
+- **Icons**: Standard sizes `w-5 h-5 lg:w-6 lg:h-6` for navigation
+
+### Layout Patterns
+- **Main Container**: `min-h-screen` with responsive flex layout
+- **Content Padding**: `p-4 lg:p-8` for main content areas
+- **Card Padding**: `p-4` or `p-6` depending on content density
+- **Responsive Breakpoints**: Use `lg:` prefix for desktop variations
+
+### Navigation Consistency
+- All pages use `router.push()` for navigation instead of state-only changes
+- Settings navigation: `onClick={() => router.push('/settings')}`
+- Consistent SidebarItem component across all pages
