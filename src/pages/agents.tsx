@@ -46,7 +46,7 @@ const RobotIcon = ({ className }: { className?: string }) => (
 );
 
 const GradixIcon = ({ className }: { className?: string }) => (
-  <svg className={className} viewBox="0 0 80 80" fill="#131313">
+  <svg className={className} viewBox="0 0 80 80" fill="#6b7280">
     <path d="M80 44.8153H51.4065L70.738 64.1467L64.3507 70.5288L44.6542 50.8322V78.8034H35.6338V51.1665L15.1196 71.6808L8.3209 64.8821L28.3826 44.8153H0V35.183H29.0255L9.4883 15.6458L15.8704 9.26372L35.6338 29.0374V1.19995H44.6542V28.5283L64.8804 8.30203L71.6791 15.1213L51.6174 35.183H80V44.8153Z" />
   </svg>
 );
@@ -203,7 +203,7 @@ export default function AgentsPage() {
                 <div className="w-8 h-8 lg:w-10 lg:h-10 flex items-center justify-center">
                   <GradixIcon className="w-6 h-6 lg:w-8 lg:h-8" />
                 </div>
-                <h1 className="text-xl lg:text-2xl font-bold text-black">gradix.ai</h1>
+                <h1 className="text-xl lg:text-2xl font-medium text-gray-500">gradix.ai</h1>
               </div>
             </div>
 
@@ -234,7 +234,7 @@ export default function AgentsPage() {
           {/* Main Content */}
           <div className="flex-1 bg-[#f9f9f9]">
             {/* Header */}
-            <div className="flex flex-col sm:flex-row sm:items-center p-4 lg:p-8 border-b border-gray-400 gap-4 bg-white">
+            <div className="flex flex-col sm:flex-row sm:items-center p-4 lg:p-8 gap-4 bg-white">
               <div className="flex items-center gap-4">
                 <div className="relative flex-1 max-w-md">
                   <SearchIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-[rgba(0,0,0,0.4)]" />
@@ -248,7 +248,7 @@ export default function AgentsPage() {
                 </div>
                 <Button
                   onClick={handleCreateAgent}
-                  className="bg-black text-white px-6 py-2 rounded-md hover:bg-gray-800 text-sm font-medium h-11"
+                  className="bg-gray-100 text-gray-600 px-6 py-2 rounded-md hover:bg-gray-200 text-sm font-medium h-11 border border-gray-300"
                 >
                   <PlusIcon className="w-4 h-4 mr-2" />
                   Create Agent
@@ -284,11 +284,11 @@ export default function AgentsPage() {
                   )}
                 </div>
               ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-start justify-items-start">
                   {filteredAgents.map((agent) => (
                     <Card 
                       key={agent.id} 
-                      className="bg-white border-[0.6px] border-[rgba(0,0,0,0.4)] h-[260px] relative cursor-pointer hover:shadow-lg transition-shadow"
+                      className="bg-white border-[0.6px] border-[rgba(0,0,0,0.4)] h-[260px] w-full relative cursor-pointer hover:shadow-lg transition-shadow"
                       onClick={() => handleAgentClick(agent)}
                     >
                       <CardContent className="p-5 h-full flex flex-col">

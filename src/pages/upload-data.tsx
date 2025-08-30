@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { addAgent } from './agents';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
@@ -48,7 +48,7 @@ const RobotIcon = ({ className }: { className?: string }) => (
 );
 
 const GradixIcon = ({ className }: { className?: string }) => (
-  <svg className={className} viewBox="0 0 80 80" fill="#131313">
+  <svg className={className} viewBox="0 0 80 80" fill="#6b7280">
     <path d="M80 44.8153H51.4065L70.738 64.1467L64.3507 70.5288L44.6542 50.8322V78.8034H35.6338V51.1665L15.1196 71.6808L8.3209 64.8821L28.3826 44.8153H0V35.183H29.0255L9.4883 15.6458L15.8704 9.26372L35.6338 29.0374V1.19995H44.6542V28.5283L64.8804 8.30203L71.6791 15.1213L51.6174 35.183H80V44.8153Z" />
   </svg>
 );
@@ -103,6 +103,20 @@ interface FormData {
   }>;
 }
 
+interface DetailedResult {
+  id: string;
+  name: string;
+  email: string;
+  totalScore: number;
+  grade: string;
+  criteria: Array<{
+    name: string;
+    description: string;
+    points: string;
+  }>;
+  keyStrengths: string[];
+}
+
 export default function UploadDataPage() {
   const router = useRouter();
   const [activeMenuItem, setActiveMenuItem] = useState('agents');
@@ -117,6 +131,14 @@ export default function UploadDataPage() {
     rubricCriteria: '',
     rubrics: []
   });
+  const [selectedResult, setSelectedResult] = useState<DetailedResult | null>(null);
+  const [showDetailModal, setShowDetailModal] = useState(false);
+  const [showCandidateDropdown, setShowCandidateDropdown] = useState(false);
+  const [showGradeDropdown, setShowGradeDropdown] = useState(false);
+  const [selectedCandidateFilter, setSelectedCandidateFilter] = useState('All Candidates');
+  const [selectedGradeFilter, setSelectedGradeFilter] = useState('All Grades');
+  const candidateDropdownRef = useRef<HTMLDivElement>(null);
+  const gradeDropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     // Check if we're coming from a template or existing agent
@@ -158,6 +180,23 @@ export default function UploadDataPage() {
     // For demo purposes, we allow access without form data
     // In a real app, you'd manage this through proper state management
   }, [router.query]);
+
+  // Click outside handler for dropdowns
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (candidateDropdownRef.current && !candidateDropdownRef.current.contains(event.target as Node)) {
+        setShowCandidateDropdown(false);
+      }
+      if (gradeDropdownRef.current && !gradeDropdownRef.current.contains(event.target as Node)) {
+        setShowGradeDropdown(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
@@ -313,6 +352,94 @@ export default function UploadDataPage() {
     }));
   };
 
+  // Sample detailed results data
+  const detailedResults: DetailedResult[] = [
+    {
+      id: '1',
+      name: 'Sanjana Mehta',
+      email: 'sanjana.mehta@tech.com',
+      totalScore: 92,
+      grade: 'Excellent',
+      criteria: [
+        {
+          name: 'Technical Innovation',
+          description: 'Demonstrates creative and advanced use of technology to solve compliance challenges in SaaS',
+          points: '18/20'
+        },
+        {
+          name: 'Compliance Alignment',
+          description: 'Strong understanding of healthcare compliance. Solution addresses relevant frameworks and regulatory gaps effectively.',
+          points: '14/15'
+        },
+        {
+          name: 'Feasibility',
+          description: 'Implementation plan is realistic, with well-scoped timelines and practical resource requirements.',
+          points: '18/20'
+        },
+        {
+          name: 'Communication',
+          description: 'Clearly structured proposal with excellent articulation of goals, approach, and impact.',
+          points: '26/30'
+        }
+      ],
+      keyStrengths: [
+        'Exceptional problem-solving abilities',
+        'Strong technical foundation',
+        'Innovative thinking and creativity',
+        'Clear communication skills'
+      ]
+    }
+  ];
+
+  const handleResultClick = (resultName: string) => {
+    console.log('Clicked on:', resultName);
+    console.log('Available results:', detailedResults);
+    const result = detailedResults.find(r => r.name === resultName);
+    console.log('Found result:', result);
+    if (result) {
+      setSelectedResult(result);
+      setShowDetailModal(true);
+      console.log('Modal should open');
+    }
+  };
+
+  const handleCloseDetail = () => {
+    setShowDetailModal(false);
+    setSelectedResult(null);
+  };
+
+  // Filter options
+  const candidateFilterOptions = [
+    'All Candidates',
+    'Accepted Candidates', 
+    'Rejected Candidates',
+    'Under Review',
+    'Pending Decision',
+    'Waitlisted'
+  ];
+
+  const gradeFilterOptions = [
+    'All Grades',
+    'Excellent (90-100)',
+    'Good (80-89)',
+    'Average (70-79)', 
+    'Below Average (60-69)',
+    'Poor (Below 60)'
+  ];
+
+  const handleCandidateFilterSelect = (option: string) => {
+    setSelectedCandidateFilter(option);
+    setShowCandidateDropdown(false);
+  };
+
+  const handleGradeFilterSelect = (option: string) => {
+    setSelectedGradeFilter(option);
+    setShowGradeDropdown(false);
+  };
+
+  // Debug logging
+  console.log('Current modal state:', { showDetailModal, selectedResult: selectedResult?.name });
+
   if (!formData) {
     return <div>Loading...</div>;
   }
@@ -334,7 +461,7 @@ export default function UploadDataPage() {
                 <div className="w-8 h-8 lg:w-10 lg:h-10 flex items-center justify-center">
                   <GradixIcon className="w-6 h-6 lg:w-8 lg:h-8" />
                 </div>
-                <h1 className="text-xl lg:text-2xl font-bold text-black">gradix.ai</h1>
+                <h1 className="text-xl lg:text-2xl font-medium text-gray-500">gradix.ai</h1>
               </div>
               
             </div>
@@ -365,7 +492,7 @@ export default function UploadDataPage() {
           {/* Main Content */}
           <div className="flex-1">
             {/* Header */}
-            <div className="flex flex-col sm:flex-row sm:items-center p-4 lg:p-8 border-b border-gray-400 gap-4 bg-white">
+            <div className="flex flex-col sm:flex-row sm:items-center p-4 lg:p-8 gap-4 bg-white">
               <div className="flex items-center gap-4">
                 <button 
                   onClick={() => router.push('/agents')}
@@ -375,12 +502,12 @@ export default function UploadDataPage() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                   </svg>
                 </button>
-                <h2 className="text-xl lg:text-2xl font-bold text-black">{formData?.agentName || 'Create New Agent'}</h2>
+                <h2 className="text-lg lg:text-xl font-medium text-gray-600">{formData?.agentName || 'Create New Agent'}</h2>
               </div>
             </div>
 
             {/* Content */}
-            <div className="p-4 lg:p-8">
+            <div className="p-4 lg:p-8 h-[calc(100vh-120px)] overflow-y-auto">
               {/* Agent Information - Horizontal Panel */}
               <Card className="mb-6 bg-white border-[0.4px] border-[rgba(0,0,0,0.3)]">
                 <CardContent className="p-6">
@@ -454,35 +581,37 @@ export default function UploadDataPage() {
                           </button>
                         )}
                       </div>
-                      <div className="space-y-2 max-h-32 overflow-y-auto">
+                      <div className="max-h-40 overflow-y-auto">
                         {isEditing ? (
-                          editableFormData.rubrics?.map((rubric, index) => (
-                            <div key={index} className="bg-[#f2f2f2] rounded-md p-3">
-                              <div className="flex items-center gap-3">
-                                <Input
-                                  value={rubric.name}
-                                  onChange={(e) => handleRubricChange(index, 'name', e.target.value)}
-                                  placeholder="Rubric name"
-                                  className="text-sm flex-1"
-                                />
-                                <Input
-                                  type="number"
-                                  value={rubric.percentage}
-                                  onChange={(e) => handleRubricChange(index, 'percentage', parseInt(e.target.value) || 0)}
-                                  placeholder="%"
-                                  className="text-sm w-16"
-                                  min="0"
-                                  max="100"
-                                />
-                                <button
-                                  onClick={() => removeRubric(index)}
-                                  className="text-xs bg-gray-100 text-black px-2 py-1 rounded border border-gray-300 hover:bg-gray-200"
-                                >
-                                  Remove
-                                </button>
+                          <div className="space-y-2">
+                            {editableFormData.rubrics?.map((rubric, index) => (
+                              <div key={index} className="bg-[#f2f2f2] rounded-md p-3">
+                                <div className="flex items-center gap-3">
+                                  <Input
+                                    value={rubric.name}
+                                    onChange={(e) => handleRubricChange(index, 'name', e.target.value)}
+                                    placeholder="Rubric name"
+                                    className="text-sm flex-1"
+                                  />
+                                  <Input
+                                    type="number"
+                                    value={rubric.percentage}
+                                    onChange={(e) => handleRubricChange(index, 'percentage', parseInt(e.target.value) || 0)}
+                                    placeholder="%"
+                                    className="text-sm w-16"
+                                    min="0"
+                                    max="100"
+                                  />
+                                  <button
+                                    onClick={() => removeRubric(index)}
+                                    className="text-xs bg-gray-100 text-black px-2 py-1 rounded border border-gray-300 hover:bg-gray-200"
+                                  >
+                                    Remove
+                                  </button>
+                                </div>
                               </div>
-                            </div>
-                          ))
+                            ))}
+                          </div>
                         ) : (
                           (() => {
                             const rubrics = formData.rubrics || [
@@ -492,12 +621,16 @@ export default function UploadDataPage() {
                               { name: 'Presentation Quality', percentage: 20 }
                             ];
                             
-                            return rubrics.map((rubric, index) => (
-                              <div key={index} className="bg-[#f2f2f2] rounded-md p-3 flex justify-between">
-                                <span className="text-sm">{rubric.name}</span>
-                                <span className="text-sm font-medium">{rubric.percentage}%</span>
+                            return (
+                              <div className="grid grid-cols-2 gap-2">
+                                {rubrics.map((rubric, index) => (
+                                  <div key={index} className="bg-[#f2f2f2] rounded-md p-3 flex justify-between">
+                                    <span className="text-sm">{rubric.name}</span>
+                                    <span className="text-sm font-medium">{rubric.percentage}%</span>
+                                  </div>
+                                ))}
                               </div>
-                            ));
+                            );
                           })()
                         )}
                       </div>
@@ -530,16 +663,16 @@ export default function UploadDataPage() {
                   {/* Tab Navigation */}
                   <div className="mb-6">
                     <Tabs value={activeTab} onValueChange={setActiveTab}>
-                      <TabsList className="bg-[#eeeeee] p-1 rounded-2xl border-[0.2px] border-[rgba(0,0,0,0.6)]">
+                      <TabsList className="bg-[#eeeeee] p-1 rounded-2xl border-[0.4px] border-[rgba(0,0,0,0.6)]">
                         <TabsTrigger 
                           value="setup" 
-                          className="data-[state=active]:bg-white data-[state=active]:shadow-[0px_0px_10px_1px_rgba(0,0,0,0.1)] rounded-xl"
+                          className="data-[state=active]:bg-white data-[state=active]:shadow-[0px_0px_10px_1px_rgba(0,0,0,0.1)] rounded-xl text-black font-medium"
                         >
                           Setup
                         </TabsTrigger>
                         <TabsTrigger 
                           value="logs" 
-                          className="data-[state=active]:bg-white data-[state=active]:shadow-[0px_0px_10px_1px_rgba(0,0,0,0.1)] rounded-xl"
+                          className="data-[state=active]:bg-white data-[state=active]:shadow-[0px_0px_10px_1px_rgba(0,0,0,0.1)] rounded-xl text-black font-medium"
                         >
                           Grading Logs
                         </TabsTrigger>
@@ -563,7 +696,7 @@ export default function UploadDataPage() {
 
                             {/* Upload Area */}
                             <div
-                              className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
+                              className={`border-2 border-dashed rounded-lg p-4 text-center transition-colors ${
                                 isDragging 
                                   ? 'border-blue-400 bg-blue-50' 
                                   : 'border-[rgba(0,0,0,0.6)] bg-[#f9f9f9]'
@@ -604,6 +737,24 @@ export default function UploadDataPage() {
                           </CardContent>
                         </Card>
 
+                        {/* Action Buttons */}
+                        <div className="flex justify-between pt-4">
+                          <Button
+                            variant="outline"
+                            onClick={handleBack}
+                            className="px-6 py-2 border-[0.6px] border-[rgba(0,0,0,0.4)] bg-transparent text-black hover:bg-gray-50"
+                          >
+                            Back
+                          </Button>
+                          
+                          <Button
+                            onClick={handleCompleteSetup}
+                            className="px-6 py-2 bg-neutral-900 text-white hover:bg-neutral-800 border-[0.6px] border-[rgba(0,0,0,0.4)]"
+                          >
+                            Start Grading
+                          </Button>
+                        </div>
+
                         {/* What happens next section */}
                         <Card className="bg-[#f2f2f2] border-[0.6px] border-[rgba(0,0,0,0.2)]">
                           <CardContent className="p-6">
@@ -628,24 +779,6 @@ export default function UploadDataPage() {
                             </ul>
                           </CardContent>
                         </Card>
-
-                        {/* Action Buttons */}
-                        <div className="flex justify-between pt-4">
-                          <Button
-                            variant="outline"
-                            onClick={handleBack}
-                            className="px-6 py-2 border-[0.6px] border-[rgba(0,0,0,0.4)] bg-transparent text-black hover:bg-gray-50"
-                          >
-                            Back
-                          </Button>
-                          
-                          <Button
-                            onClick={handleCompleteSetup}
-                            className="px-6 py-2 bg-neutral-900 text-white hover:bg-neutral-800 border-[0.6px] border-[rgba(0,0,0,0.4)]"
-                          >
-                            Start Grading
-                          </Button>
-                        </div>
                       </TabsContent>
 
                       <TabsContent value="logs" className="mt-6">
@@ -715,28 +848,25 @@ export default function UploadDataPage() {
                             <div className="p-6">
                               <div className="flex items-center justify-between mb-6">
                                 <div className="flex items-center gap-6">
-                                  <div className="bg-[#eeeeee] p-1 rounded-2xl flex">
-                                    <button className="bg-white px-6 py-2 rounded-xl shadow-[0px_0px_10px_1px_rgba(0,0,0,0.1)] text-lg font-normal">
+                                  <div className="bg-[#eeeeee] p-1 rounded-2xl flex border-[0.6px] border-[rgba(0,0,0,0.8)]">
+                                    <button className="bg-white px-4 py-2 rounded-xl shadow-[0px_0px_10px_1px_rgba(0,0,0,0.15)] text-base font-medium text-black border border-[rgba(0,0,0,0.1)]">
                                       All Evaluation Results
                                     </button>
-                                    <button className="px-6 py-2 rounded-xl text-lg text-[rgba(0,0,0,0.6)]">
+                                    <button className="px-4 py-2 rounded-xl text-base text-[rgba(0,0,0,0.7)] hover:bg-gray-100 transition-colors font-medium">
                                       Analytics
                                     </button>
                                   </div>
                                 </div>
-                                <Button 
-                                  variant="outline" 
-                                  className="border-[0.6px] border-[rgba(0,0,0,0.4)] bg-white hover:bg-gray-50"
-                                >
-                                  <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <button className="flex items-center gap-2 border-[0.8px] border-[rgba(0,0,0,0.8)] bg-white hover:bg-gray-50 text-black font-medium px-4 py-2 rounded-md shadow-sm transition-colors">
+                                  <svg className="w-4 h-4 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                                   </svg>
                                   Export Results
-                                </Button>
+                                </button>
                               </div>
 
                               {/* Search and Filters */}
-                              <div className="flex items-center justify-between mb-6 p-4 bg-white rounded-[10px] border-[0.8px] border-[rgba(0,0,0,0.2)] opacity-80">
+                              <div className="flex items-center justify-between mb-6 p-4 bg-white rounded-[10px] border-[0.8px] border-[rgba(0,0,0,0.2)]">
                                 <div className="flex-1 max-w-[620px]">
                                   <div className="relative">
                                     <svg className="absolute left-4 top-1/2 transform -translate-y-1/2 w-4 h-4 text-[rgba(0,0,0,0.4)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -744,23 +874,68 @@ export default function UploadDataPage() {
                                     </svg>
                                     <Input
                                       placeholder="Select by name or email"
-                                      className="pl-12 h-10 border-[0.4px] border-[rgba(0,0,0,0.6)] text-sm placeholder:text-[rgba(0,0,0,0.4)]"
+                                      className="pl-12 h-10 border-[0.8px] border-[rgba(0,0,0,0.8)] text-sm placeholder:text-[rgba(0,0,0,0.6)] bg-white text-black"
                                     />
                                   </div>
                                 </div>
                                 <div className="flex gap-3 ml-4">
-                                  <Button variant="outline" className="border-[0.6px] border-[rgba(0,0,0,0.4)] bg-white hover:bg-gray-50 text-sm">
-                                    Rejected Candidates
-                                    <svg className="w-3.5 h-3.5 ml-2 rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                                    </svg>
-                                  </Button>
-                                  <Button variant="outline" className="border-[0.6px] border-[rgba(0,0,0,0.4)] bg-white hover:bg-gray-50 text-sm">
-                                    All Grades
-                                    <svg className="w-3.5 h-3.5 ml-2 rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                                    </svg>
-                                  </Button>
+                                  {/* Candidate Filter Dropdown */}
+                                  <div className="relative" ref={candidateDropdownRef}>
+                                    <button 
+                                      onClick={() => setShowCandidateDropdown(!showCandidateDropdown)}
+                                      className="flex items-center gap-2 border-[0.8px] border-[rgba(0,0,0,0.8)] bg-white hover:bg-gray-50 text-sm text-black font-medium px-4 py-2 rounded-md shadow-sm transition-colors"
+                                    >
+                                      {selectedCandidateFilter}
+                                      <svg className={`w-3.5 h-3.5 text-black transition-transform ${showCandidateDropdown ? 'rotate-0' : 'rotate-180'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                      </svg>
+                                    </button>
+                                    {showCandidateDropdown && (
+                                      <div className="absolute top-full left-0 mt-2 w-48 bg-white border-[0.8px] border-[rgba(0,0,0,0.8)] rounded-md shadow-lg z-10">
+                                        {candidateFilterOptions.map((option) => (
+                                          <button
+                                            key={option}
+                                            onClick={() => handleCandidateFilterSelect(option)}
+                                            className={`w-full text-left px-4 py-2 text-sm text-black hover:bg-gray-50 transition-colors ${
+                                              selectedCandidateFilter === option ? 'bg-gray-100 font-medium text-black' : 'text-black'
+                                            }`}
+                                            style={{ color: '#000000' }}
+                                          >
+                                            {option}
+                                          </button>
+                                        ))}
+                                      </div>
+                                    )}
+                                  </div>
+
+                                  {/* Grade Filter Dropdown */}
+                                  <div className="relative" ref={gradeDropdownRef}>
+                                    <button 
+                                      onClick={() => setShowGradeDropdown(!showGradeDropdown)}
+                                      className="flex items-center gap-2 border-[0.8px] border-[rgba(0,0,0,0.8)] bg-white hover:bg-gray-50 text-sm text-black font-medium px-4 py-2 rounded-md shadow-sm transition-colors"
+                                    >
+                                      {selectedGradeFilter}
+                                      <svg className={`w-3.5 h-3.5 text-black transition-transform ${showGradeDropdown ? 'rotate-0' : 'rotate-180'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                      </svg>
+                                    </button>
+                                    {showGradeDropdown && (
+                                      <div className="absolute top-full right-0 mt-2 w-48 bg-white border-[0.8px] border-[rgba(0,0,0,0.8)] rounded-md shadow-lg z-10">
+                                        {gradeFilterOptions.map((option) => (
+                                          <button
+                                            key={option}
+                                            onClick={() => handleGradeFilterSelect(option)}
+                                            className={`w-full text-left px-4 py-2 text-sm text-black hover:bg-gray-50 transition-colors ${
+                                              selectedGradeFilter === option ? 'bg-gray-100 font-medium text-black' : 'text-black'
+                                            }`}
+                                            style={{ color: '#000000' }}
+                                          >
+                                            {option}
+                                          </button>
+                                        ))}
+                                      </div>
+                                    )}
+                                  </div>
                                 </div>
                               </div>
 
@@ -768,88 +943,156 @@ export default function UploadDataPage() {
                             </div>
 
                             {/* Results List */}
-                            <div className="px-6 pb-6 space-y-4">
-                              {/* Result Entry 1 */}
-                              <div className="bg-white border-[0.4px] border-[rgba(0,0,0,0.4)] rounded-lg p-4 flex items-center gap-4">
-                                <div className="w-6 h-6 bg-gray-300 rounded-full flex items-center justify-center text-sm text-black">1</div>
-                                <div className="flex-1">
-                                  <div className="font-light text-sm text-black">Sanjana Mehta</div>
-                                </div>
-                                <div className="text-sm font-light text-black text-right">
-                                  It is outside the scope of tech compliance solutions.
-                                </div>
-                              </div>
-
-                              {/* Result Entry 2 */}
-                              <div className="bg-white border-[0.4px] border-[rgba(0,0,0,0.4)] rounded-lg p-4 flex items-center gap-4">
-                                <div className="w-6 h-6 bg-gray-300 rounded-full flex items-center justify-center text-sm text-black">2</div>
-                                <div className="flex-1">
-                                  <div className="font-light text-sm text-black">Rohan Varma</div>
-                                </div>
-                                <div className="text-sm font-light text-black text-right">
-                                  Did not demonstrate innovation in tech compliance.
-                                </div>
-                              </div>
-
-                              {/* Result Entry 3 */}
-                              <div className="bg-white border-[0.4px] border-[rgba(0,0,0,0.4)] rounded-lg p-4 flex items-center gap-4">
-                                <div className="w-6 h-6 bg-gray-300 rounded-full flex items-center justify-center text-sm text-black">3</div>
-                                <div className="flex-1">
-                                  <div className="font-light text-sm text-black">Alina Das</div>
-                                </div>
-                                <div className="text-sm font-light text-black text-right">
-                                  Proposal lacked clarity in addressing compliance challenges.
-                                </div>
-                              </div>
-
-                              {/* Result Entry 4 */}
-                              <div className="bg-white border-[0.4px] border-[rgba(0,0,0,0.4)] rounded-lg p-4 flex items-center gap-4">
-                                <div className="w-6 h-6 bg-gray-300 rounded-full flex items-center justify-center text-sm text-black">4</div>
-                                <div className="flex-1">
-                                  <div className="font-light text-sm text-black">Amit Rajan</div>
-                                </div>
-                                <div className="text-sm font-light text-black text-right">
-                                  Did not meet leadership or revenue eligibility criteria.
-                                </div>
-                              </div>
-
-                              {/* Result Entry 5 */}
-                              <div className="bg-white border-[0.4px] border-[rgba(0,0,0,0.4)] rounded-lg p-4 flex items-center gap-4">
-                                <div className="w-6 h-6 bg-gray-300 rounded-full flex items-center justify-center text-sm text-black">5</div>
-                                <div className="flex-1">
-                                  <div className="font-light text-sm text-black">Rahul Sharma</div>
-                                </div>
-                                <div className="text-sm font-light text-black text-right">
-                                  Submission is more suited for a general tech event, not tech compliance.
-                                </div>
-                              </div>
-
-                              {/* Detailed Result Entry */}
-                              <div className="bg-white border-[0.4px] border-[rgba(0,0,0,0.4)] rounded-lg p-4">
-                                <div className="flex items-start gap-4">
-                                  <div className="w-6 h-6 bg-gray-300 rounded-full flex items-center justify-center text-sm text-black">6</div>
-                                  <div className="flex-1">
-                                    <div className="font-light text-sm text-black mb-3">Priya Sinha</div>
-                                    <div className="flex flex-wrap gap-2 mb-3">
-                                      <span className="bg-[#d9d9d9] px-3 py-1 rounded-2xl text-xs text-[rgba(0,0,0,0.8)]">
-                                        Technical Skills: Excellent
-                                      </span>
-                                      <span className="bg-[#d9d9d9] px-3 py-1 rounded-2xl text-xs text-[rgba(0,0,0,0.8)]">
-                                        Communication: Excellent
-                                      </span>
-                                      <span className="bg-[#d9d9d9] px-3 py-1 rounded-2xl text-xs text-[rgba(0,0,0,0.8)]">
-                                        Academic Performance: Excellent
-                                      </span>
-                                      <span className="bg-[#eeeded] px-3 py-1 rounded-2xl text-xs text-[rgba(0,0,0,0.8)]">
-                                        Work Experience: Good
-                                      </span>
+                            <div className="px-6 pb-6 space-y-3">
+                              {/* Result Entry 1 - Sanjana Mehta */}
+                              <div 
+                                className="bg-white border-[0.4px] border-[rgba(0,0,0,0.4)] rounded-lg p-4 cursor-pointer hover:shadow-md transition-shadow"
+                                onClick={() => handleResultClick('Sanjana Mehta')}
+                              >
+                                <div className="flex items-center justify-between">
+                                  <div className="flex items-center gap-3">
+                                    <div className="w-6 h-6 bg-gray-300 rounded-full flex items-center justify-center text-sm text-black font-medium">1</div>
+                                    <div>
+                                      <div className="font-medium text-sm text-black mb-2">Sanjana Mehta</div>
+                                      <div className="flex flex-wrap gap-2">
+                                        <span className="bg-[#e5e7eb] px-2 py-1 rounded text-xs text-[rgba(0,0,0,0.8)]">
+                                          Technical Skills: Excellent
+                                        </span>
+                                        <span className="bg-[#e5e7eb] px-2 py-1 rounded text-xs text-[rgba(0,0,0,0.8)]">
+                                          Communication: Excellent
+                                        </span>
+                                        <span className="bg-[#e5e7eb] px-2 py-1 rounded text-xs text-[rgba(0,0,0,0.8)]">
+                                          Academic Performance: Excellent
+                                        </span>
+                                        <span className="bg-[#e5e7eb] px-2 py-1 rounded text-xs text-[rgba(0,0,0,0.8)]">
+                                          Work Experience: Good
+                                        </span>
+                                      </div>
                                     </div>
                                   </div>
                                   <div className="text-right">
-                                    <div className="text-2xl font-semibold text-black mb-1">70%</div>
-                                    <div className="border border-[rgba(0,0,0,0.4)] px-2.5 py-0.5 rounded-lg">
-                                      <span className="text-xs font-light text-black">Good</span>
+                                    <div className="text-xl font-semibold text-black">92%</div>
+                                    <div className="text-xs text-[rgba(0,0,0,0.6)] mt-1">Excellent</div>
+                                  </div>
+                                </div>
+                              </div>
+
+                              {/* Result Entry 2 - Rohan Varma */}
+                              <div className="bg-white border-[0.4px] border-[rgba(0,0,0,0.4)] rounded-lg p-4">
+                                <div className="flex items-center justify-between">
+                                  <div className="flex items-center gap-3">
+                                    <div className="w-6 h-6 bg-gray-300 rounded-full flex items-center justify-center text-sm text-black font-medium">2</div>
+                                    <div>
+                                      <div className="font-medium text-sm text-black mb-2">Rohan Varma</div>
+                                      <div className="flex flex-wrap gap-2">
+                                        <span className="bg-[#e5e7eb] px-2 py-1 rounded text-xs text-[rgba(0,0,0,0.8)]">
+                                          Technical Skills: Excellent
+                                        </span>
+                                        <span className="bg-[#e5e7eb] px-2 py-1 rounded text-xs text-[rgba(0,0,0,0.8)]">
+                                          Communication: Excellent
+                                        </span>
+                                        <span className="bg-[#e5e7eb] px-2 py-1 rounded text-xs text-[rgba(0,0,0,0.8)]">
+                                          Academic Performance: Excellent
+                                        </span>
+                                        <span className="bg-[#e5e7eb] px-2 py-1 rounded text-xs text-[rgba(0,0,0,0.8)]">
+                                          Work Experience: Good
+                                        </span>
+                                      </div>
                                     </div>
+                                  </div>
+                                  <div className="text-right">
+                                    <div className="text-xl font-semibold text-black">87%</div>
+                                    <div className="text-xs text-[rgba(0,0,0,0.6)] mt-1">Good</div>
+                                  </div>
+                                </div>
+                              </div>
+
+                              {/* Result Entry 3 - Alina Das */}
+                              <div className="bg-white border-[0.4px] border-[rgba(0,0,0,0.4)] rounded-lg p-4">
+                                <div className="flex items-center justify-between">
+                                  <div className="flex items-center gap-3">
+                                    <div className="w-6 h-6 bg-gray-300 rounded-full flex items-center justify-center text-sm text-black font-medium">3</div>
+                                    <div>
+                                      <div className="font-medium text-sm text-black mb-2">Alina Das</div>
+                                      <div className="flex flex-wrap gap-2">
+                                        <span className="bg-[#e5e7eb] px-2 py-1 rounded text-xs text-[rgba(0,0,0,0.8)]">
+                                          Technical Skills: Excellent
+                                        </span>
+                                        <span className="bg-[#e5e7eb] px-2 py-1 rounded text-xs text-[rgba(0,0,0,0.8)]">
+                                          Communication: Excellent
+                                        </span>
+                                        <span className="bg-[#e5e7eb] px-2 py-1 rounded text-xs text-[rgba(0,0,0,0.8)]">
+                                          Academic Performance: Excellent
+                                        </span>
+                                        <span className="bg-[#e5e7eb] px-2 py-1 rounded text-xs text-[rgba(0,0,0,0.8)]">
+                                          Work Experience: Good
+                                        </span>
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div className="text-right">
+                                    <div className="text-xl font-semibold text-black">86%</div>
+                                    <div className="text-xs text-[rgba(0,0,0,0.6)] mt-1">Good</div>
+                                  </div>
+                                </div>
+                              </div>
+
+                              {/* Result Entry 4 - Amit Rajan */}
+                              <div className="bg-white border-[0.4px] border-[rgba(0,0,0,0.4)] rounded-lg p-4">
+                                <div className="flex items-center justify-between">
+                                  <div className="flex items-center gap-3">
+                                    <div className="w-6 h-6 bg-gray-300 rounded-full flex items-center justify-center text-sm text-black font-medium">4</div>
+                                    <div>
+                                      <div className="font-medium text-sm text-black mb-2">Amit Rajan</div>
+                                      <div className="flex flex-wrap gap-2">
+                                        <span className="bg-[#e5e7eb] px-2 py-1 rounded text-xs text-[rgba(0,0,0,0.8)]">
+                                          Technical Skills: Excellent
+                                        </span>
+                                        <span className="bg-[#e5e7eb] px-2 py-1 rounded text-xs text-[rgba(0,0,0,0.8)]">
+                                          Communication: Excellent
+                                        </span>
+                                        <span className="bg-[#e5e7eb] px-2 py-1 rounded text-xs text-[rgba(0,0,0,0.8)]">
+                                          Academic Performance: Excellent
+                                        </span>
+                                        <span className="bg-[#e5e7eb] px-2 py-1 rounded text-xs text-[rgba(0,0,0,0.8)]">
+                                          Work Experience: Good
+                                        </span>
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div className="text-right">
+                                    <div className="text-xl font-semibold text-black">82%</div>
+                                    <div className="text-xs text-[rgba(0,0,0,0.6)] mt-1">Good</div>
+                                  </div>
+                                </div>
+                              </div>
+
+                              {/* Result Entry 5 - Priya Sinha */}
+                              <div className="bg-white border-[0.4px] border-[rgba(0,0,0,0.4)] rounded-lg p-4">
+                                <div className="flex items-center justify-between">
+                                  <div className="flex items-center gap-3">
+                                    <div className="w-6 h-6 bg-gray-300 rounded-full flex items-center justify-center text-sm text-black font-medium">5</div>
+                                    <div>
+                                      <div className="font-medium text-sm text-black mb-2">Priya Sinha</div>
+                                      <div className="flex flex-wrap gap-2">
+                                        <span className="bg-[#e5e7eb] px-2 py-1 rounded text-xs text-[rgba(0,0,0,0.8)]">
+                                          Technical Skills: Excellent
+                                        </span>
+                                        <span className="bg-[#e5e7eb] px-2 py-1 rounded text-xs text-[rgba(0,0,0,0.8)]">
+                                          Communication: Excellent
+                                        </span>
+                                        <span className="bg-[#e5e7eb] px-2 py-1 rounded text-xs text-[rgba(0,0,0,0.8)]">
+                                          Academic Performance: Excellent
+                                        </span>
+                                        <span className="bg-[#e5e7eb] px-2 py-1 rounded text-xs text-[rgba(0,0,0,0.8)]">
+                                          Work Experience: Good
+                                        </span>
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div className="text-right">
+                                    <div className="text-xl font-semibold text-black">70%</div>
+                                    <div className="text-xs text-[rgba(0,0,0,0.6)] mt-1">Good</div>
                                   </div>
                                 </div>
                               </div>
@@ -864,6 +1107,98 @@ export default function UploadDataPage() {
           </div>
         </div>
       </div>
+
+      {/* Detailed Result Modal */}
+      {showDetailModal && selectedResult ? (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-[10px] border-[0.8px] border-[rgba(0,0,0,0.2)] max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+            {/* Modal Header */}
+            <div className="p-6 border-b border-gray-200 flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <button 
+                  onClick={handleCloseDetail}
+                  className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                >
+                  <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                  </svg>
+                </button>
+                <div>
+                  <h2 className="text-xl font-medium text-black">{selectedResult.name}</h2>
+                  <p className="text-sm text-[rgba(0,0,0,0.6)]">{selectedResult.email}</p>
+                </div>
+              </div>
+              <button 
+                onClick={handleCloseDetail}
+                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            {/* Modal Content */}
+            <div className="p-6">
+              <div className="mb-6">
+                <h3 className="text-lg font-medium text-black mb-4">Evaluation Results</h3>
+                
+                {/* Criteria Table */}
+                <div className="bg-[#f9f9f9] rounded-lg overflow-hidden mb-6">
+                  <table className="w-full">
+                    <thead>
+                      <tr className="bg-[#eeeeee]">
+                        <th className="text-left p-4 text-sm font-medium text-[rgba(0,0,0,0.8)]">Criteria</th>
+                        <th className="text-left p-4 text-sm font-medium text-[rgba(0,0,0,0.8)]">Description</th>
+                        <th className="text-right p-4 text-sm font-medium text-[rgba(0,0,0,0.8)]">Points</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {selectedResult.criteria.map((criterion, index) => (
+                        <tr key={index} className="border-t border-[rgba(0,0,0,0.1)]">
+                          <td className="p-4 text-sm text-black font-medium">{criterion.name}</td>
+                          <td className="p-4 text-sm text-black">{criterion.description}</td>
+                          <td className="p-4 text-sm text-black font-medium text-right">{criterion.points}</td>
+                        </tr>
+                      ))}
+                      <tr className="border-t-2 border-[rgba(0,0,0,0.2)] bg-[#f2f2f2]">
+                        <td className="p-4 text-sm font-medium text-black">TOTAL</td>
+                        <td className="p-4"></td>
+                        <td className="p-4 text-sm font-medium text-black text-right">{selectedResult.totalScore}/100</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+
+                {/* Score and Grade */}
+                <div className="grid grid-cols-2 gap-6 mb-6">
+                  <div className="text-center">
+                    <div className="text-4xl font-light text-black mb-2">{selectedResult.totalScore}%</div>
+                    <div className="text-sm text-[rgba(0,0,0,0.6)]">Overall Score</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-2xl font-medium text-black mb-2">{selectedResult.grade}</div>
+                    <div className="text-sm text-[rgba(0,0,0,0.6)]">Grade</div>
+                  </div>
+                </div>
+
+                {/* Key Strengths */}
+                <div>
+                  <h4 className="text-base font-medium text-black mb-3">Key Strengths</h4>
+                  <ul className="space-y-2">
+                    {selectedResult.keyStrengths.map((strength, index) => (
+                      <li key={index} className="flex items-start gap-2">
+                        <span className="w-1.5 h-1.5 bg-black rounded-full mt-2 flex-shrink-0"></span>
+                        <span className="text-sm text-black">{strength}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      ) : null}
     </>
   );
 }

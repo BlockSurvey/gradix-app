@@ -47,7 +47,7 @@ const RobotIcon = ({ className }: { className?: string }) => (
 );
 
 const GradixIcon = ({ className }: { className?: string }) => (
-  <svg className={className} viewBox="0 0 80 80" fill="#131313">
+  <svg className={className} viewBox="0 0 80 80" fill="#6b7280">
     <path d="M80 44.8153H51.4065L70.738 64.1467L64.3507 70.5288L44.6542 50.8322V78.8034H35.6338V51.1665L15.1196 71.6808L8.3209 64.8821L28.3826 44.8153H0V35.183H29.0255L9.4883 15.6458L15.8704 9.26372L35.6338 29.0374V1.19995H44.6542V28.5283L64.8804 8.30203L71.6791 15.1213L51.6174 35.183H80V44.8153Z" />
   </svg>
 );
@@ -136,7 +136,7 @@ export default function CreateAgentPage() {
                 <div className="w-8 h-8 lg:w-10 lg:h-10 flex items-center justify-center">
                   <GradixIcon className="w-6 h-6 lg:w-8 lg:h-8" />
                 </div>
-                <h1 className="text-xl lg:text-2xl font-bold text-black">gradix.ai</h1>
+                <h1 className="text-xl lg:text-2xl font-medium text-gray-500">gradix.ai</h1>
               </div>
             </div>
 
@@ -167,8 +167,8 @@ export default function CreateAgentPage() {
           {/* Main Content */}
           <div className="flex-1 bg-[#f9f9f9]">
             {/* Header */}
-            <div className="flex flex-col sm:flex-row sm:items-center p-4 lg:p-8 border-b border-gray-400 gap-4 bg-white">
-              <h2 className="text-xl lg:text-2xl font-bold text-black">Create New Agent</h2>
+            <div className="flex flex-col sm:flex-row sm:items-center p-4 lg:p-8 gap-4 bg-white">
+              <h2 className="text-lg lg:text-xl font-medium text-gray-600">Create New Agent</h2>
             </div>
 
             {/* Form Content */}
