@@ -137,6 +137,7 @@ export default function UploadDataPage() {
   const [showGradeDropdown, setShowGradeDropdown] = useState(false);
   const [selectedCandidateFilter, setSelectedCandidateFilter] = useState('All Candidates');
   const [selectedGradeFilter, setSelectedGradeFilter] = useState('All Grades');
+  const [logsView, setLogsView] = useState<'results' | 'analytics'>('results');
   const candidateDropdownRef = useRef<HTMLDivElement>(null);
   const gradeDropdownRef = useRef<HTMLDivElement>(null);
 
@@ -581,7 +582,7 @@ export default function UploadDataPage() {
                           </button>
                         )}
                       </div>
-                      <div className="max-h-32 overflow-y-auto">
+                      <div>
                         {isEditing ? (
                           <div className="space-y-2">
                             {editableFormData.rubrics?.map((rubric, index) => (
@@ -846,33 +847,33 @@ export default function UploadDataPage() {
                           <div className="bg-white rounded-[10px] border-[0.8px] border-[rgba(0,0,0,0.2)] overflow-hidden">
                             {/* Results Header */}
                             <div className="p-6">
-                              <div className="flex items-center justify-between mb-6">
-                                <div className="flex items-center gap-6">
-                                  <div className="bg-[#eeeeee] p-1 rounded-2xl flex border-[0.6px] border-[rgba(0,0,0,0.8)]">
+                              <div className="flex items-center justify-between mb-4">
+                                <div className="flex items-center gap-4">
+                                  <div className="bg-gray-100 p-0.5 rounded-lg flex border border-gray-300">
                                     <button 
-                                      onClick={() => setActiveTab('logs')}
-                                      className={`px-4 py-2 rounded-xl text-base font-medium transition-colors ${
-                                        activeTab === 'logs' 
-                                          ? 'bg-white text-black shadow-[0px_0px_10px_1px_rgba(0,0,0,0.15)] border border-[rgba(0,0,0,0.1)]'
-                                          : 'text-[rgba(0,0,0,0.7)] hover:bg-gray-100'
+                                      onClick={() => setLogsView('results')}
+                                      className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
+                                        logsView === 'results' 
+                                          ? 'bg-white text-black shadow-sm'
+                                          : 'text-gray-600 hover:bg-gray-50'
                                       }`}
                                     >
                                       All Evaluation Results
                                     </button>
                                     <button 
-                                      onClick={() => setActiveTab('analytics')}
-                                      className={`px-4 py-2 rounded-xl text-base font-medium transition-colors ${
-                                        activeTab === 'analytics' 
-                                          ? 'bg-white text-black shadow-[0px_0px_10px_1px_rgba(0,0,0,0.15)] border border-[rgba(0,0,0,0.1)]'
-                                          : 'text-[rgba(0,0,0,0.7)] hover:bg-gray-100'
+                                      onClick={() => setLogsView('analytics')}
+                                      className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
+                                        logsView === 'analytics' 
+                                          ? 'bg-white text-black shadow-sm'
+                                          : 'text-gray-600 hover:bg-gray-50'
                                       }`}
                                     >
                                       Analytics
                                     </button>
                                   </div>
                                 </div>
-                                <button className="flex items-center gap-2 border-[0.8px] border-[rgba(0,0,0,0.8)] bg-white hover:bg-gray-50 text-black font-medium px-4 py-2 rounded-md shadow-sm transition-colors">
-                                  <svg className="w-4 h-4 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <button className="flex items-center gap-1.5 border border-gray-300 bg-white hover:bg-gray-50 text-gray-700 text-sm px-3 py-1.5 rounded-md transition-colors">
+                                  <svg className="w-3.5 h-3.5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                                   </svg>
                                   Export Results
@@ -953,22 +954,22 @@ export default function UploadDataPage() {
                                 </div>
                               </div>
 
-                              {activeTab === 'logs' && <h3 className="text-xl font-normal text-black mb-4">Results (20)</h3>}
+                              {logsView === 'results' && <h3 className="text-xl font-normal text-black mb-4">Results (20)</h3>}
                             </div>
 
                             {/* Analytics Content */}
-                            {activeTab === 'analytics' && (
-                              <div className="px-6 pb-6">
+                            {logsView === 'analytics' && (
+                              <div className="px-4 pb-4">
                                 {/* Charts Section */}
-                                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                                   {/* Score Distribution Chart */}
-                                  <div className="bg-white border-[0.8px] border-[rgba(0,0,0,0.2)] rounded-[10px] p-6">
-                                    <h3 className="text-xl font-medium text-black mb-6">Score Distribution</h3>
+                                  <div className="bg-white border border-gray-200 rounded-lg p-4">
+                                    <h3 className="text-sm font-medium text-black mb-3">Score Distribution</h3>
                                     
                                     {/* Chart Container */}
                                     <div className="relative">
                                       {/* Y-axis labels */}
-                                      <div className="absolute left-0 h-64 flex flex-col justify-between text-sm text-[rgba(0,0,0,0.8)] py-2">
+                                      <div className="absolute left-0 h-40 flex flex-col justify-between text-xs text-gray-500 py-1">
                                         <span>60</span>
                                         <span>45</span>
                                         <span>30</span>
@@ -977,39 +978,39 @@ export default function UploadDataPage() {
                                       </div>
                                       
                                       {/* Chart area */}
-                                      <div className="ml-8 relative">
+                                      <div className="ml-6 relative">
                                         {/* Grid lines */}
                                         <div className="absolute inset-0 flex flex-col justify-between">
                                           {[...Array(5)].map((_, i) => (
-                                            <div key={i} className="border-t border-gray-200"></div>
+                                            <div key={i} className="border-t border-gray-100"></div>
                                           ))}
                                         </div>
                                         
                                         {/* Bars */}
-                                        <div className="flex items-end justify-between h-64 px-4">
+                                        <div className="flex items-end justify-between h-40 px-2">
                                           <div className="flex flex-col items-center">
-                                            <div className="bg-emerald-500 w-12 rounded-t-lg mb-2" style={{ height: '53px' }}></div>
-                                            <span className="text-sm text-[rgba(0,0,0,0.8)] transform -rotate-0">90-100</span>
+                                            <div className="bg-gray-600 w-8 rounded-t mb-1" style={{ height: '33px' }}></div>
+                                            <span className="text-[10px] text-gray-600">90-100</span>
                                           </div>
                                           <div className="flex flex-col items-center">
-                                            <div className="bg-emerald-500 w-12 rounded-t-lg mb-2" style={{ height: '86px' }}></div>
-                                            <span className="text-sm text-[rgba(0,0,0,0.8)] transform -rotate-0">80-89</span>
+                                            <div className="bg-gray-600 w-8 rounded-t mb-1" style={{ height: '54px' }}></div>
+                                            <span className="text-[10px] text-gray-600">80-89</span>
                                           </div>
                                           <div className="flex flex-col items-center">
-                                            <div className="bg-emerald-500 w-12 rounded-t-lg mb-2" style={{ height: '229px' }}></div>
-                                            <span className="text-sm text-[rgba(0,0,0,0.8)] transform -rotate-0">70-79</span>
+                                            <div className="bg-gray-600 w-8 rounded-t mb-1" style={{ height: '143px' }}></div>
+                                            <span className="text-[10px] text-gray-600">70-79</span>
                                           </div>
                                           <div className="flex flex-col items-center">
-                                            <div className="bg-emerald-500 w-12 rounded-t-lg mb-2" style={{ height: '32px' }}></div>
-                                            <span className="text-sm text-[rgba(0,0,0,0.8)] transform -rotate-0">60-69</span>
+                                            <div className="bg-gray-600 w-8 rounded-t mb-1" style={{ height: '20px' }}></div>
+                                            <span className="text-[10px] text-gray-600">60-69</span>
                                           </div>
                                           <div className="flex flex-col items-center">
-                                            <div className="bg-emerald-500 w-12 rounded-t-lg mb-2" style={{ height: '16px' }}></div>
-                                            <span className="text-sm text-[rgba(0,0,0,0.8)] transform -rotate-0">50-59</span>
+                                            <div className="bg-gray-600 w-8 rounded-t mb-1" style={{ height: '10px' }}></div>
+                                            <span className="text-[10px] text-gray-600">50-59</span>
                                           </div>
                                           <div className="flex flex-col items-center">
-                                            <div className="bg-emerald-500 w-12 rounded-t-lg mb-2" style={{ height: '8px' }}></div>
-                                            <span className="text-sm text-[rgba(0,0,0,0.8)] transform -rotate-0">40-49</span>
+                                            <div className="bg-gray-600 w-8 rounded-t mb-1" style={{ height: '5px' }}></div>
+                                            <span className="text-[10px] text-gray-600">40-49</span>
                                           </div>
                                         </div>
                                       </div>
@@ -1017,63 +1018,63 @@ export default function UploadDataPage() {
                                   </div>
 
                                   {/* Average Performance by Criteria */}
-                                  <div className="bg-white border-[0.8px] border-[rgba(0,0,0,0.2)] rounded-[10px] p-6">
-                                    <h3 className="text-xl font-medium text-black mb-6">Average Performance by Criteria</h3>
+                                  <div className="bg-white border border-gray-200 rounded-lg p-4">
+                                    <h3 className="text-sm font-medium text-black mb-3">Average Performance by Criteria</h3>
                                     
-                                    <div className="space-y-4">
+                                    <div className="space-y-2">
                                       {/* Technical Skills */}
                                       <div className="flex items-center justify-between">
-                                        <span className="text-sm text-black font-medium w-32">Technical Skills</span>
-                                        <div className="flex-1 mx-4">
-                                          <div className="bg-gray-200 h-3 rounded">
-                                            <div className="bg-blue-500 h-3 rounded" style={{ width: '84.3%' }}></div>
+                                        <span className="text-xs text-black w-24">Technical Skills</span>
+                                        <div className="flex-1 mx-3">
+                                          <div className="bg-gray-100 h-2 rounded">
+                                            <div className="bg-gray-500 h-2 rounded" style={{ width: '84.3%' }}></div>
                                           </div>
                                         </div>
-                                        <span className="text-sm text-black w-16 text-right">84.3% avg</span>
+                                        <span className="text-xs text-gray-500 w-12 text-right">84.3%</span>
                                       </div>
                                       
                                       {/* Communication */}
                                       <div className="flex items-center justify-between">
-                                        <span className="text-sm text-black font-medium w-32">Communication</span>
-                                        <div className="flex-1 mx-4">
-                                          <div className="bg-gray-200 h-3 rounded">
-                                            <div className="bg-blue-500 h-3 rounded" style={{ width: '86.2%' }}></div>
+                                        <span className="text-xs text-black w-24">Communication</span>
+                                        <div className="flex-1 mx-3">
+                                          <div className="bg-gray-100 h-2 rounded">
+                                            <div className="bg-gray-500 h-2 rounded" style={{ width: '86.2%' }}></div>
                                           </div>
                                         </div>
-                                        <span className="text-sm text-black w-16 text-right">86.2% avg</span>
+                                        <span className="text-xs text-gray-500 w-12 text-right">86.2%</span>
                                       </div>
                                       
                                       {/* Academic Performance */}
                                       <div className="flex items-center justify-between">
-                                        <span className="text-sm text-black font-medium w-32">Academic Performance</span>
-                                        <div className="flex-1 mx-4">
-                                          <div className="bg-gray-200 h-3 rounded">
-                                            <div className="bg-blue-500 h-3 rounded" style={{ width: '83.1%' }}></div>
+                                        <span className="text-xs text-black w-24">Academic</span>
+                                        <div className="flex-1 mx-3">
+                                          <div className="bg-gray-100 h-2 rounded">
+                                            <div className="bg-gray-500 h-2 rounded" style={{ width: '83.1%' }}></div>
                                           </div>
                                         </div>
-                                        <span className="text-sm text-black w-16 text-right">83.1% avg</span>
+                                        <span className="text-xs text-gray-500 w-12 text-right">83.1%</span>
                                       </div>
                                       
                                       {/* Work Experience */}
                                       <div className="flex items-center justify-between">
-                                        <span className="text-sm text-black font-medium w-32">Work Experience</span>
-                                        <div className="flex-1 mx-4">
-                                          <div className="bg-gray-200 h-3 rounded">
-                                            <div className="bg-blue-500 h-3 rounded" style={{ width: '84.4%' }}></div>
+                                        <span className="text-xs text-black w-24">Work Experience</span>
+                                        <div className="flex-1 mx-3">
+                                          <div className="bg-gray-100 h-2 rounded">
+                                            <div className="bg-gray-500 h-2 rounded" style={{ width: '84.4%' }}></div>
                                           </div>
                                         </div>
-                                        <span className="text-sm text-black w-16 text-right">84.4% avg</span>
+                                        <span className="text-xs text-gray-500 w-12 text-right">84.4%</span>
                                       </div>
                                       
                                       {/* Cultural Fit */}
                                       <div className="flex items-center justify-between">
-                                        <span className="text-sm text-black font-medium w-32">Cultural Fit</span>
-                                        <div className="flex-1 mx-4">
-                                          <div className="bg-gray-200 h-3 rounded">
-                                            <div className="bg-blue-500 h-3 rounded" style={{ width: '85.0%' }}></div>
+                                        <span className="text-xs text-black w-24">Cultural Fit</span>
+                                        <div className="flex-1 mx-3">
+                                          <div className="bg-gray-100 h-2 rounded">
+                                            <div className="bg-gray-500 h-2 rounded" style={{ width: '85.0%' }}></div>
                                           </div>
                                         </div>
-                                        <span className="text-sm text-black w-16 text-right">85.0% avg</span>
+                                        <span className="text-xs text-gray-500 w-12 text-right">85.0%</span>
                                       </div>
                                     </div>
                                   </div>
@@ -1082,7 +1083,7 @@ export default function UploadDataPage() {
                             )}
 
                             {/* Results List */}
-                            {activeTab === 'logs' && (
+                            {logsView === 'results' && (
                               <div className="px-6 pb-6 space-y-3">
                                 {/* Result Entry 1 - Sanjana Mehta */}
                               <div 
@@ -1236,9 +1237,8 @@ export default function UploadDataPage() {
                                   </div>
                                 </div>
                               </div>
-                              </div>
-                            )}
                             </div>
+                            )}
                           </div>
                         </div>
                       </TabsContent>
