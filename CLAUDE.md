@@ -10,6 +10,7 @@ Gradix is an application evaluation system built with Next.js 13 that helps auto
 
 - **Framework**: Next.js 13.1.6 with TypeScript
 - **Styling**: Tailwind CSS with custom breakpoint (xs: 475px)
+- **UI Components**: shadcn/ui - A component library built with Radix UI and Tailwind CSS
 - **State Management**: Zustand
 - **Code Quality**: ESLint, Prettier, Husky with lint-staged pre-commit hooks
 
@@ -56,3 +57,12 @@ All commits trigger lint-staged which runs:
 2. **State Management**: Zustand for global state (example store at src/stores/zustand.store.tsx)
 3. **TypeScript**: Strict mode enabled with comprehensive type checking
 4. **API Routes**: Located in src/pages/api/ and automatically mapped to /api/*
+5. **UI Components**: shadcn/ui components located in src/components/ui/ - prefer these over custom components when available
+
+## UI Component Guidelines
+
+### shadcn/ui Usage
+- **Import Path**: All shadcn/ui components use `@/components/ui/` imports
+- **Available Components**: Button, Dialog, Card, Badge, and other pre-configured components
+- **Customization**: Components can be customized via className props while maintaining accessibility
+- **Priority**: Always prefer shadcn/ui components over building custom ones when functionality matches
