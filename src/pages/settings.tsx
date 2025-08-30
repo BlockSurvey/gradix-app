@@ -34,6 +34,12 @@ const AgentsIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
+const ContactsIcon = ({ className }: { className?: string }) => (
+  <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+  </svg>
+);
+
 const GradixIcon = ({ className }: { className?: string }) => (
   <svg className={className} viewBox="0 0 80 80" fill="#6b7280">
     <path d="M80 44.8153H51.4065L70.738 64.1467L64.3507 70.5288L44.6542 50.8322V78.8034H35.6338V51.1665L15.1196 71.6808L8.3209 64.8821L28.3826 44.8153H0V35.183H29.0255L9.4883 15.6458L15.8704 9.26372L35.6338 29.0374V1.19995H44.6542V28.5283L64.8804 8.30203L71.6791 15.1213L51.6174 35.183H80V44.8153Z" />
@@ -156,6 +162,12 @@ export default function SettingsPage() {
                 label="All Agents"
                 isActive={activeMenuItem === 'agents'}
                 onClick={() => router.push('/agents')}
+              />
+              <SidebarItem
+                icon={<ContactsIcon className="w-5 h-5 lg:w-6 lg:h-6" />}
+                label="Contacts"
+                isActive={activeMenuItem === 'contacts'}
+                onClick={() => router.push('/contacts')}
               />
               <SidebarItem
                 icon={<AnalyticsIcon className="w-5 h-5 lg:w-6 lg:h-6" />}
