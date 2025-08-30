@@ -152,7 +152,7 @@ export default function CreateAgentPage() {
                 icon={<AnalyticsIcon className="w-5 h-5 lg:w-6 lg:h-6" />}
                 label="Analytics"
                 isActive={activeMenuItem === 'analytics'}
-                onClick={() => setActiveMenuItem('analytics')}
+                onClick={() => router.push('/analytics')}
               />
               <SidebarItem
                 icon={<SettingsIcon className="w-5 h-5 lg:w-6 lg:h-6" />}
