@@ -71,6 +71,7 @@ const HistoryIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
+
 interface SidebarItemProps {
   icon: React.ReactNode;
   label: string;
@@ -380,145 +381,152 @@ export default function UploadDataPage() {
 
             {/* Content */}
             <div className="p-4 lg:p-8">
-              <div className="flex gap-8">
-                {/* Agent Information Sidebar */}
-                <Card className="w-[378px] bg-white border-[0.4px] border-[rgba(0,0,0,0.3)] flex-shrink-0">
-                  <CardContent className="p-6 space-y-6">
-                    <div className="flex items-center justify-between">
-                      <h3 className="text-lg font-medium text-black">Agent Information</h3>
-                      {!isEditing ? (
-                        <button onClick={handleEditClick}>
-                          <EditIcon className="w-4 h-4 text-gray-400 hover:text-gray-600" />
-                        </button>
-                      ) : (
-                        <div className="flex gap-2">
-                          <button 
-                            onClick={handleSaveEdit}
-                            className="text-xs bg-black text-white px-2 py-1 rounded hover:bg-gray-800"
-                          >
-                            Save
-                          </button>
-                          <button 
-                            onClick={handleCancelEdit}
-                            className="text-xs bg-gray-100 text-black px-2 py-1 rounded border border-gray-300 hover:bg-gray-200"
-                          >
-                            Cancel
-                          </button>
-                        </div>
-                      )}
-                    </div>
-
-                    <div className="space-y-4">
+              {/* Agent Information - Horizontal Panel */}
+              <Card className="mb-6 bg-white border-[0.4px] border-[rgba(0,0,0,0.3)]">
+                <CardContent className="p-6">
+                  {/* Top Row - Agent Name and Application Type */}
+                  <div className="flex items-start justify-between mb-6">
+                    <div className="flex items-start gap-8">
+                      {/* Agent Name */}
                       <div>
-                        <div className="text-sm text-[rgba(0,0,0,0.8)] font-light">Agent Name</div>
+                        <div className="text-sm text-[rgba(0,0,0,0.8)] font-light mb-2">Agent Name</div>
                         {isEditing ? (
                           <Input
                             value={editableFormData.agentName}
                             onChange={(e) => handleEditInputChange('agentName', e.target.value)}
-                            className="mt-2 text-sm"
+                            className="text-sm w-64"
                           />
                         ) : (
                           <div className="text-sm text-black font-medium">{formData.agentName}</div>
                         )}
                       </div>
 
+                      {/* Application Type */}
                       <div>
-                        <div className="text-sm text-[rgba(0,0,0,0.8)] font-light">Application Type</div>
+                        <div className="text-sm text-[rgba(0,0,0,0.8)] font-light mb-2">Application Type</div>
                         {isEditing ? (
                           <Input
                             value={editableFormData.applicationType}
                             onChange={(e) => handleEditInputChange('applicationType', e.target.value)}
-                            className="mt-2 text-sm"
+                            className="text-sm w-64"
                           />
                         ) : (
                           <div className="text-sm text-black font-medium">{formData.applicationType}</div>
                         )}
                       </div>
+                    </div>
 
-                      <div>
-                        <div className="flex items-center justify-between mb-2">
-                          <div className="text-sm text-[rgba(0,0,0,0.8)] font-light">Rubrics</div>
-                          {isEditing && (
-                            <button
-                              onClick={addRubric}
-                              className="text-xs bg-gray-100 text-black px-2 py-1 rounded border border-gray-300 hover:bg-gray-200"
-                            >
-                              Add Rubric
-                            </button>
-                          )}
-                        </div>
-                        <div className="space-y-2">
-                          {isEditing ? (
-                            editableFormData.rubrics?.map((rubric, index) => (
-                              <div key={index} className="bg-[#f2f2f2] rounded-md p-3 space-y-2">
-                                <div className="flex items-center gap-2">
-                                  <Input
-                                    value={rubric.name}
-                                    onChange={(e) => handleRubricChange(index, 'name', e.target.value)}
-                                    placeholder="Rubric name"
-                                    className="text-sm"
-                                  />
-                                  <Input
-                                    type="number"
-                                    value={rubric.percentage}
-                                    onChange={(e) => handleRubricChange(index, 'percentage', parseInt(e.target.value) || 0)}
-                                    placeholder="%"
-                                    className="text-sm w-20"
-                                    min="0"
-                                    max="100"
-                                  />
-                                  <button
-                                    onClick={() => removeRubric(index)}
-                                    className="text-xs bg-gray-100 text-black px-2 py-1 rounded border border-gray-300 hover:bg-gray-200"
-                                  >
-                                    Remove
-                                  </button>
-                                </div>
-                              </div>
-                            ))
-                          ) : (
-                            (() => {
-                              const rubrics = formData.rubrics || [
-                                { name: 'Innovation & Creativity', percentage: 30 },
-                                { name: 'Technical Execution', percentage: 25 },
-                                { name: 'Real-world Impact', percentage: 25 },
-                                { name: 'Presentation Quality', percentage: 20 }
-                              ];
-                              
-                              return rubrics.map((rubric, index) => (
-                                <div key={index} className="bg-[#f2f2f2] rounded-md p-3 flex justify-between">
-                                  <span className="text-sm">{rubric.name}</span>
-                                  <span className="text-sm font-medium">{rubric.percentage}%</span>
-                                </div>
-                              ));
-                            })()
-                          )}
-                        </div>
+                    {/* Edit Controls */}
+                    {!isEditing ? (
+                      <button onClick={handleEditClick}>
+                        <EditIcon className="w-4 h-4 text-gray-400 hover:text-gray-600" />
+                      </button>
+                    ) : (
+                      <div className="flex gap-2">
+                        <button 
+                          onClick={handleSaveEdit}
+                          className="text-xs bg-black text-white px-2 py-1 rounded hover:bg-gray-800"
+                        >
+                          Save
+                        </button>
+                        <button 
+                          onClick={handleCancelEdit}
+                          className="text-xs bg-gray-100 text-black px-2 py-1 rounded border border-gray-300 hover:bg-gray-200"
+                        >
+                          Cancel
+                        </button>
                       </div>
+                    )}
+                  </div>
 
-                      <div>
-                        <div className="text-sm text-[rgba(0,0,0,0.8)] font-light mb-2">Grading Instructions</div>
+                  {/* Bottom Row - Rubrics and Grading Instructions */}
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    {/* Rubrics */}
+                    <div>
+                      <div className="flex items-center justify-between mb-3">
+                        <div className="text-sm text-[rgba(0,0,0,0.8)] font-light">Rubrics</div>
+                        {isEditing && (
+                          <button
+                            onClick={addRubric}
+                            className="text-xs bg-gray-100 text-black px-2 py-1 rounded border border-gray-300 hover:bg-gray-200"
+                          >
+                            Add Rubric
+                          </button>
+                        )}
+                      </div>
+                      <div className="space-y-2 max-h-32 overflow-y-auto">
                         {isEditing ? (
-                          <Textarea
-                            value={editableFormData.rubricCriteria}
-                            onChange={(e) => handleEditInputChange('rubricCriteria', e.target.value)}
-                            className="text-sm resize-none"
-                            rows={4}
-                          />
+                          editableFormData.rubrics?.map((rubric, index) => (
+                            <div key={index} className="bg-[#f2f2f2] rounded-md p-3">
+                              <div className="flex items-center gap-3">
+                                <Input
+                                  value={rubric.name}
+                                  onChange={(e) => handleRubricChange(index, 'name', e.target.value)}
+                                  placeholder="Rubric name"
+                                  className="text-sm flex-1"
+                                />
+                                <Input
+                                  type="number"
+                                  value={rubric.percentage}
+                                  onChange={(e) => handleRubricChange(index, 'percentage', parseInt(e.target.value) || 0)}
+                                  placeholder="%"
+                                  className="text-sm w-16"
+                                  min="0"
+                                  max="100"
+                                />
+                                <button
+                                  onClick={() => removeRubric(index)}
+                                  className="text-xs bg-gray-100 text-black px-2 py-1 rounded border border-gray-300 hover:bg-gray-200"
+                                >
+                                  Remove
+                                </button>
+                              </div>
+                            </div>
+                          ))
                         ) : (
-                          <div className="bg-[#f2f2f2] rounded-md p-3">
-                            <p className="text-sm text-black leading-relaxed">
-                              {formData.rubricCriteria}
-                            </p>
-                          </div>
+                          (() => {
+                            const rubrics = formData.rubrics || [
+                              { name: 'Innovation & Creativity', percentage: 30 },
+                              { name: 'Technical Execution', percentage: 25 },
+                              { name: 'Real-world Impact', percentage: 25 },
+                              { name: 'Presentation Quality', percentage: 20 }
+                            ];
+                            
+                            return rubrics.map((rubric, index) => (
+                              <div key={index} className="bg-[#f2f2f2] rounded-md p-3 flex justify-between">
+                                <span className="text-sm">{rubric.name}</span>
+                                <span className="text-sm font-medium">{rubric.percentage}%</span>
+                              </div>
+                            ));
+                          })()
                         )}
                       </div>
                     </div>
-                  </CardContent>
-                </Card>
 
-                {/* Upload Section */}
-                <div className="flex-1">
+                    {/* Grading Instructions */}
+                    <div>
+                      <div className="text-sm text-[rgba(0,0,0,0.8)] font-light mb-3">Grading Instructions</div>
+                      {isEditing ? (
+                        <Textarea
+                          value={editableFormData.rubricCriteria}
+                          onChange={(e) => handleEditInputChange('rubricCriteria', e.target.value)}
+                          className="text-sm resize-none h-32"
+                          rows={6}
+                        />
+                      ) : (
+                        <div className="bg-[#f2f2f2] rounded-md p-3 max-h-32 overflow-y-auto">
+                          <p className="text-sm text-black leading-relaxed">
+                            {formData.rubricCriteria}
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Main Content Area */}
+              <div className="w-full">
                   {/* Tab Navigation */}
                   <div className="mb-6">
                     <Tabs value={activeTab} onValueChange={setActiveTab}>
@@ -555,7 +563,7 @@ export default function UploadDataPage() {
 
                             {/* Upload Area */}
                             <div
-                              className={`border-2 border-dashed rounded-lg p-12 text-center transition-colors ${
+                              className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
                                 isDragging 
                                   ? 'border-blue-400 bg-blue-50' 
                                   : 'border-[rgba(0,0,0,0.6)] bg-[#f9f9f9]'
@@ -572,16 +580,16 @@ export default function UploadDataPage() {
                                 className="hidden"
                               />
                               
-                              <div className="mb-4">
-                                <div className="w-14 h-14 bg-[#bcbcbc] rounded-full flex items-center justify-center mx-auto">
-                                  <UploadIcon className="w-6 h-6 text-white" />
+                              <div className="mb-3">
+                                <div className="w-12 h-12 bg-[#bcbcbc] rounded-full flex items-center justify-center mx-auto">
+                                  <UploadIcon className="w-5 h-5 text-white" />
                                 </div>
                               </div>
                               
                               <h3 className="text-lg font-medium text-black mb-2">
                                 {selectedFile ? selectedFile.name : 'Click or drag and drop to upload'}
                               </h3>
-                              <p className="text-sm text-[rgba(0,0,0,0.6)] mb-4">
+                              <p className="text-sm text-[rgba(0,0,0,0.6)] mb-3">
                                 Upload from CSV, XLSV, Google Sheets
                               </p>
                               
@@ -635,21 +643,222 @@ export default function UploadDataPage() {
                             onClick={handleCompleteSetup}
                             className="px-6 py-2 bg-neutral-900 text-white hover:bg-neutral-800 border-[0.6px] border-[rgba(0,0,0,0.4)]"
                           >
-                            Complete Setup
+                            Start Grading
                           </Button>
                         </div>
                       </TabsContent>
 
                       <TabsContent value="logs" className="mt-6">
-                        <Card className="bg-white border-[0.4px] border-[rgba(0,0,0,0.3)]">
-                          <CardContent className="p-8 text-center">
-                            <p className="text-gray-500">No grading logs available yet. Complete the setup to start grading.</p>
-                          </CardContent>
-                        </Card>
+                        <div className="space-y-6">
+                          {/* Statistics Cards */}
+                          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                            <Card className="bg-white border-[0.6px] border-[rgba(0,0,0,0.4)]">
+                              <CardContent className="p-6">
+                                <div className="flex items-center gap-3 mb-4">
+                                  <div className="w-5 h-5 bg-gray-200 rounded flex items-center justify-center">
+                                    <svg className="w-3 h-3 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
+                                      <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                    </svg>
+                                  </div>
+                                  <span className="text-sm text-[rgba(0,0,0,0.7)]">Total Applications</span>
+                                </div>
+                                <div className="text-3xl font-light text-black">20</div>
+                              </CardContent>
+                            </Card>
+
+                            <Card className="bg-white border-[0.6px] border-[rgba(0,0,0,0.4)]">
+                              <CardContent className="p-6">
+                                <div className="flex items-center gap-3 mb-4">
+                                  <div className="w-5 h-5 bg-gray-200 rounded flex items-center justify-center">
+                                    <svg className="w-3 h-3 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
+                                      <path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5z"/>
+                                    </svg>
+                                  </div>
+                                  <span className="text-sm text-[rgba(0,0,0,0.7)]">Highest Score</span>
+                                </div>
+                                <div className="text-3xl font-light text-black">92</div>
+                              </CardContent>
+                            </Card>
+
+                            <Card className="bg-white border-[0.6px] border-[rgba(0,0,0,0.4)]">
+                              <CardContent className="p-6">
+                                <div className="flex items-center gap-3 mb-4">
+                                  <div className="w-5 h-5 bg-gray-200 rounded flex items-center justify-center">
+                                    <svg className="w-3 h-3 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
+                                      <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"/>
+                                    </svg>
+                                  </div>
+                                  <span className="text-sm text-[rgba(0,0,0,0.7)]">Lowest Score</span>
+                                </div>
+                                <div className="text-3xl font-light text-black">48</div>
+                              </CardContent>
+                            </Card>
+
+                            <Card className="bg-white border-[0.6px] border-[rgba(0,0,0,0.4)]">
+                              <CardContent className="p-6">
+                                <div className="flex items-center gap-3 mb-4">
+                                  <div className="w-5 h-5 bg-gray-200 rounded flex items-center justify-center">
+                                    <svg className="w-3 h-3 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
+                                      <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"/>
+                                    </svg>
+                                  </div>
+                                  <span className="text-sm text-[rgba(0,0,0,0.7)]">Average Score</span>
+                                </div>
+                                <div className="text-3xl font-light text-black">78.5%</div>
+                              </CardContent>
+                            </Card>
+                          </div>
+
+                          {/* Results Section */}
+                          <div className="bg-white rounded-[10px] border-[0.8px] border-[rgba(0,0,0,0.2)] overflow-hidden">
+                            {/* Results Header */}
+                            <div className="p-6">
+                              <div className="flex items-center justify-between mb-6">
+                                <div className="flex items-center gap-6">
+                                  <div className="bg-[#eeeeee] p-1 rounded-2xl flex">
+                                    <button className="bg-white px-6 py-2 rounded-xl shadow-[0px_0px_10px_1px_rgba(0,0,0,0.1)] text-lg font-normal">
+                                      All Evaluation Results
+                                    </button>
+                                    <button className="px-6 py-2 rounded-xl text-lg text-[rgba(0,0,0,0.6)]">
+                                      Analytics
+                                    </button>
+                                  </div>
+                                </div>
+                                <Button 
+                                  variant="outline" 
+                                  className="border-[0.6px] border-[rgba(0,0,0,0.4)] bg-white hover:bg-gray-50"
+                                >
+                                  <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                  </svg>
+                                  Export Results
+                                </Button>
+                              </div>
+
+                              {/* Search and Filters */}
+                              <div className="flex items-center justify-between mb-6 p-4 bg-white rounded-[10px] border-[0.8px] border-[rgba(0,0,0,0.2)] opacity-80">
+                                <div className="flex-1 max-w-[620px]">
+                                  <div className="relative">
+                                    <svg className="absolute left-4 top-1/2 transform -translate-y-1/2 w-4 h-4 text-[rgba(0,0,0,0.4)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                    </svg>
+                                    <Input
+                                      placeholder="Select by name or email"
+                                      className="pl-12 h-10 border-[0.4px] border-[rgba(0,0,0,0.6)] text-sm placeholder:text-[rgba(0,0,0,0.4)]"
+                                    />
+                                  </div>
+                                </div>
+                                <div className="flex gap-3 ml-4">
+                                  <Button variant="outline" className="border-[0.6px] border-[rgba(0,0,0,0.4)] bg-white hover:bg-gray-50 text-sm">
+                                    Rejected Candidates
+                                    <svg className="w-3.5 h-3.5 ml-2 rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                    </svg>
+                                  </Button>
+                                  <Button variant="outline" className="border-[0.6px] border-[rgba(0,0,0,0.4)] bg-white hover:bg-gray-50 text-sm">
+                                    All Grades
+                                    <svg className="w-3.5 h-3.5 ml-2 rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                    </svg>
+                                  </Button>
+                                </div>
+                              </div>
+
+                              <h3 className="text-xl font-normal text-black mb-4">Results (20)</h3>
+                            </div>
+
+                            {/* Results List */}
+                            <div className="px-6 pb-6 space-y-4">
+                              {/* Result Entry 1 */}
+                              <div className="bg-white border-[0.4px] border-[rgba(0,0,0,0.4)] rounded-lg p-4 flex items-center gap-4">
+                                <div className="w-6 h-6 bg-gray-300 rounded-full flex items-center justify-center text-sm text-black">1</div>
+                                <div className="flex-1">
+                                  <div className="font-light text-sm text-black">Sanjana Mehta</div>
+                                </div>
+                                <div className="text-sm font-light text-black text-right">
+                                  It is outside the scope of tech compliance solutions.
+                                </div>
+                              </div>
+
+                              {/* Result Entry 2 */}
+                              <div className="bg-white border-[0.4px] border-[rgba(0,0,0,0.4)] rounded-lg p-4 flex items-center gap-4">
+                                <div className="w-6 h-6 bg-gray-300 rounded-full flex items-center justify-center text-sm text-black">2</div>
+                                <div className="flex-1">
+                                  <div className="font-light text-sm text-black">Rohan Varma</div>
+                                </div>
+                                <div className="text-sm font-light text-black text-right">
+                                  Did not demonstrate innovation in tech compliance.
+                                </div>
+                              </div>
+
+                              {/* Result Entry 3 */}
+                              <div className="bg-white border-[0.4px] border-[rgba(0,0,0,0.4)] rounded-lg p-4 flex items-center gap-4">
+                                <div className="w-6 h-6 bg-gray-300 rounded-full flex items-center justify-center text-sm text-black">3</div>
+                                <div className="flex-1">
+                                  <div className="font-light text-sm text-black">Alina Das</div>
+                                </div>
+                                <div className="text-sm font-light text-black text-right">
+                                  Proposal lacked clarity in addressing compliance challenges.
+                                </div>
+                              </div>
+
+                              {/* Result Entry 4 */}
+                              <div className="bg-white border-[0.4px] border-[rgba(0,0,0,0.4)] rounded-lg p-4 flex items-center gap-4">
+                                <div className="w-6 h-6 bg-gray-300 rounded-full flex items-center justify-center text-sm text-black">4</div>
+                                <div className="flex-1">
+                                  <div className="font-light text-sm text-black">Amit Rajan</div>
+                                </div>
+                                <div className="text-sm font-light text-black text-right">
+                                  Did not meet leadership or revenue eligibility criteria.
+                                </div>
+                              </div>
+
+                              {/* Result Entry 5 */}
+                              <div className="bg-white border-[0.4px] border-[rgba(0,0,0,0.4)] rounded-lg p-4 flex items-center gap-4">
+                                <div className="w-6 h-6 bg-gray-300 rounded-full flex items-center justify-center text-sm text-black">5</div>
+                                <div className="flex-1">
+                                  <div className="font-light text-sm text-black">Rahul Sharma</div>
+                                </div>
+                                <div className="text-sm font-light text-black text-right">
+                                  Submission is more suited for a general tech event, not tech compliance.
+                                </div>
+                              </div>
+
+                              {/* Detailed Result Entry */}
+                              <div className="bg-white border-[0.4px] border-[rgba(0,0,0,0.4)] rounded-lg p-4">
+                                <div className="flex items-start gap-4">
+                                  <div className="w-6 h-6 bg-gray-300 rounded-full flex items-center justify-center text-sm text-black">6</div>
+                                  <div className="flex-1">
+                                    <div className="font-light text-sm text-black mb-3">Priya Sinha</div>
+                                    <div className="flex flex-wrap gap-2 mb-3">
+                                      <span className="bg-[#d9d9d9] px-3 py-1 rounded-2xl text-xs text-[rgba(0,0,0,0.8)]">
+                                        Technical Skills: Excellent
+                                      </span>
+                                      <span className="bg-[#d9d9d9] px-3 py-1 rounded-2xl text-xs text-[rgba(0,0,0,0.8)]">
+                                        Communication: Excellent
+                                      </span>
+                                      <span className="bg-[#d9d9d9] px-3 py-1 rounded-2xl text-xs text-[rgba(0,0,0,0.8)]">
+                                        Academic Performance: Excellent
+                                      </span>
+                                      <span className="bg-[#eeeded] px-3 py-1 rounded-2xl text-xs text-[rgba(0,0,0,0.8)]">
+                                        Work Experience: Good
+                                      </span>
+                                    </div>
+                                  </div>
+                                  <div className="text-right">
+                                    <div className="text-2xl font-semibold text-black mb-1">70%</div>
+                                    <div className="border border-[rgba(0,0,0,0.4)] px-2.5 py-0.5 rounded-lg">
+                                      <span className="text-xs font-light text-black">Good</span>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
                       </TabsContent>
                     </Tabs>
                   </div>
-                </div>
               </div>
             </div>
           </div>
