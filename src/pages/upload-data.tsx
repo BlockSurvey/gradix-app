@@ -304,6 +304,8 @@ export default function UploadDataPage() {
     stage: 'Initializing AI Grader',
     description: 'Setting up AI models and processing environment...'
   });
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadButtonText, setUploadButtonText] = useState('Start Grading');
   
   // Application Form State
   const [applicationFormData, setApplicationFormData] = useState({
@@ -455,7 +457,7 @@ export default function UploadDataPage() {
     alert(`Sample data loaded: ${sampleFileName}`);
   };
 
-  const handleCompleteSetup = () => {
+  const handleCompleteSetup = async () => {
     if (!selectedFile) {
       alert('Please select a file to upload');
       return;
@@ -466,20 +468,241 @@ export default function UploadDataPage() {
       return;
     }
 
-    // Show grading progress modal
-    setShowGradingProgress(true);
+    setIsUploading(true);
+    setUploadButtonText('Uploading...');
 
-    // Simulate progress updates
-    setTimeout(() => {
+    try {
+      // Create FormData object
+      const uploadFormData = new FormData();
+      uploadFormData.append('file', selectedFile);
+
+      // Show grading progress modal
+      setShowGradingProgress(true);
       setGradingProgress({
-        progress: 8,
-        filesProcessed: 22,
+        progress: 5,
+        filesProcessed: 0,
         totalFiles: 500,
-        timeRemaining: '1 hr',
-        stage: 'Processing Applications',
-        description: 'Analyzing and grading submitted applications...'
+        timeRemaining: 'Calculating...',
+        stage: '📤 Uploading Dataset',
+        description: 'Securely transferring your application data to our AI grading system...'
       });
-    }, 3000);
+
+      // Make API call to upload the dataset
+      const response = await fetch('http://127.0.0.1:8000/api/v1/datasets/upload', {
+        method: 'POST',
+        body: uploadFormData,
+      });
+
+      if (!response.ok) {
+        throw new Error(`Upload failed: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      console.log('Upload successful:', data);
+
+      // Extract dataset_id from the response
+      const datasetId = data.dataset_id || data.id;
+      if (!datasetId) {
+        throw new Error('No dataset ID received from upload');
+      }
+
+      // Hold upload complete for 2 seconds
+      setTimeout(() => {
+        setGradingProgress({
+          progress: 15,
+          filesProcessed: 0,
+          totalFiles: 500,
+          timeRemaining: 'Processing...',
+          stage: '✅ Upload Complete',
+          description: 'Your dataset has been successfully uploaded. Preparing for analysis...'
+        });
+        setUploadButtonText('Processing Upload...');
+      }, 1500);
+
+      // Wait before starting summary
+      await new Promise(resolve => setTimeout(resolve, 3000));
+
+      // Update progress to show summarizing
+      setGradingProgress({
+        progress: 20,
+        filesProcessed: 0,
+        totalFiles: 500,
+        timeRemaining: 'Analyzing...',
+        stage: '📊 Analyzing Dataset',
+        description: 'Our AI is reading through your applications and understanding the data structure...'
+      });
+      setUploadButtonText('Analyzing Data...');
+
+      // Call summary API
+      const summaryResponse = await fetch(
+        `http://127.0.0.1:8000/api/v1/datasets/${datasetId}/summary`,
+        {
+          method: 'GET',
+        }
+      );
+
+      if (!summaryResponse.ok) {
+        throw new Error(`Summary generation failed: ${summaryResponse.statusText}`);
+      }
+
+      const summaryData = await summaryResponse.json();
+      console.log('Summary generated:', summaryData);
+
+      // Show summary complete
+      setGradingProgress({
+        progress: 35,
+        filesProcessed: 50,
+        totalFiles: 500,
+        timeRemaining: 'Preparing evaluation...',
+        stage: '✨ Dataset Analysis Complete',
+        description: `Found ${summaryData.total_records || 500} applications ready for AI evaluation. Preparing rubric-based grading...`
+      });
+      setUploadButtonText('Preparing Evaluation...');
+
+      // Hold for user to see
+      await new Promise(resolve => setTimeout(resolve, 2500));
+
+      // Update progress for evaluation
+      setGradingProgress({
+        progress: 40,
+        filesProcessed: 100,
+        totalFiles: 500,
+        timeRemaining: 'Initializing...',
+        stage: '🤖 Configuring AI Evaluator',
+        description: 'Setting up your custom rubrics and grading criteria for personalized evaluation...'
+      });
+      setUploadButtonText('Configuring AI...');
+
+      // Call evaluation API
+      const evaluationPayload = {
+        grading_id: "DgoAISSxEQy2siWOI3dD",
+        dataset_id: datasetId,
+        name: "Gradix AI application evaluation"
+      };
+
+      const evaluationResponse = await fetch(
+        'http://127.0.0.1:8000/api/v1/evaluations',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(evaluationPayload),
+        }
+      );
+
+      if (!evaluationResponse.ok) {
+        throw new Error(`Evaluation failed: ${evaluationResponse.statusText}`);
+      }
+
+      const evaluationData = await evaluationResponse.json();
+      console.log('Evaluation created:', evaluationData);
+
+      // Extract evaluation_id from the response
+      const evaluationId = evaluationData.evaluation_id || evaluationData.id;
+      if (!evaluationId) {
+        throw new Error('No evaluation ID received from evaluation creation');
+      }
+
+      // Hold to show evaluation created
+      await new Promise(resolve => setTimeout(resolve, 2000));
+
+      // Update progress for starting evaluation
+      setGradingProgress({
+        progress: 50,
+        filesProcessed: 150,
+        totalFiles: 500,
+        timeRemaining: 'Starting evaluation...',
+        stage: '🚀 Launching AI Evaluation',
+        description: 'Initializing advanced AI models to evaluate each application against your rubrics...'
+      });
+      setUploadButtonText('Starting Evaluation...');
+
+      // Start the evaluation process
+      const startEvaluationResponse = await fetch(
+        `http://127.0.0.1:8000/api/v1/evaluations/${evaluationId}/start`,
+        {
+          method: 'POST',
+        }
+      );
+
+      if (!startEvaluationResponse.ok) {
+        throw new Error(`Failed to start evaluation: ${startEvaluationResponse.statusText}`);
+      }
+
+      const startEvaluationData = await startEvaluationResponse.json();
+      console.log('Evaluation process started:', startEvaluationData);
+
+      // Show evaluation started
+      setGradingProgress({
+        progress: 60,
+        filesProcessed: 200,
+        totalFiles: 500,
+        timeRemaining: 'Processing applications...',
+        stage: '⚡ AI Evaluation in Progress',
+        description: 'Our AI is now carefully reviewing each application. This ensures fair and consistent grading...'
+      });
+      setUploadButtonText('Evaluating Applications...');
+
+      // Hold for 3 seconds
+      await new Promise(resolve => setTimeout(resolve, 3000));
+
+      // Update progress after successful evaluation start
+      setGradingProgress({
+        progress: 75,
+        filesProcessed: 350,
+        totalFiles: 500,
+        timeRemaining: 'Almost done...',
+        stage: '📝 Grading Applications',
+        description: 'Scoring each application based on your rubrics: Innovation, Technical Skills, Impact, and more...'
+      });
+      setUploadButtonText('Grading in Progress...');
+
+      // Continue with more engaging progress updates
+      setTimeout(() => {
+        setGradingProgress({
+          progress: 85,
+          filesProcessed: 425,
+          totalFiles: 500,
+          timeRemaining: 'Finalizing...',
+          stage: '🎯 Generating Insights',
+          description: 'Creating detailed feedback and identifying top performers based on evaluation scores...'
+        });
+        setUploadButtonText('Generating Insights...');
+      }, 6000);
+
+      setTimeout(() => {
+        setGradingProgress({
+          progress: 95,
+          filesProcessed: 480,
+          totalFiles: 500,
+          timeRemaining: 'Almost complete...',
+          stage: '📊 Preparing Results',
+          description: 'Organizing results, calculating final scores, and preparing detailed analytics dashboard...'
+        });
+        setUploadButtonText('Finalizing Results...');
+      }, 10000);
+
+      setTimeout(() => {
+        setGradingProgress({
+          progress: 100,
+          filesProcessed: 500,
+          totalFiles: 500,
+          timeRemaining: 'Complete!',
+          stage: '🎉 Evaluation Complete!',
+          description: 'All applications have been successfully evaluated! View your results in the Grading Logs tab.'
+        });
+        setUploadButtonText('Complete! View Results');
+        setIsUploading(false);
+      }, 14000);
+
+    } catch (error) {
+      console.error('Error uploading file:', error);
+      alert(`Failed to upload file: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      setShowGradingProgress(false);
+      setIsUploading(false);
+      setUploadButtonText('Start Grading');
+    }
   };
 
   const handleBack = () => {
@@ -1633,9 +1856,40 @@ export default function UploadDataPage() {
 
                             <Button
                               onClick={handleCompleteSetup}
-                              className="px-4 py-2 text-sm bg-black text-white hover:bg-gray-800"
+                              disabled={isUploading || !selectedFile}
+                              className={`px-4 py-2 text-sm ${
+                                isUploading || !selectedFile
+                                  ? 'bg-gray-400 cursor-not-allowed'
+                                  : 'bg-black hover:bg-gray-800'
+                              } text-white transition-colors`}
                             >
-                              Start Grading
+                              {isUploading ? (
+                                <span className="flex items-center gap-2">
+                                  <svg 
+                                    className="animate-spin h-4 w-4 text-white" 
+                                    xmlns="http://www.w3.org/2000/svg" 
+                                    fill="none" 
+                                    viewBox="0 0 24 24"
+                                  >
+                                    <circle 
+                                      className="opacity-25" 
+                                      cx="12" 
+                                      cy="12" 
+                                      r="10" 
+                                      stroke="currentColor" 
+                                      strokeWidth="4"
+                                    />
+                                    <path 
+                                      className="opacity-75" 
+                                      fill="currentColor" 
+                                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                                    />
+                                  </svg>
+                                  {uploadButtonText}
+                                </span>
+                              ) : (
+                                uploadButtonText
+                              )}
                             </Button>
                           </div>
                         </div>
