@@ -604,10 +604,10 @@ export default function UploadDataPage() {
         { id: 'technologies', label: 'Technologies Used *', type: 'textarea', placeholder: 'List the technologies, frameworks, and tools used' },
         { id: 'problemSolved', label: 'Problem Solved *', type: 'textarea', placeholder: 'What problem does your project solve?' },
         { id: 'targetAudience', label: 'Target Audience', type: 'text', placeholder: 'Who is your target audience?' },
-        { id: 'projectStatus', label: 'Project Status *', type: 'select', options: ['MVP/Prototype', 'Working Beta', 'Production Ready', 'Concept/Design Only'] },
+        { id: 'projectStatus', label: 'Project Status *', type: 'select', placeholder: 'Select project status', options: ['MVP/Prototype', 'Working Beta', 'Production Ready', 'Concept/Design Only'] },
         { id: 'challenges', label: 'Challenges Faced', type: 'textarea', placeholder: 'What challenges did you encounter and how did you overcome them?' },
         { id: 'futurePlans', label: 'Future Plans', type: 'textarea', placeholder: 'What are your plans for this project moving forward?' },
-        { id: 'license', label: 'License Type', type: 'select', options: ['MIT', 'Apache 2.0', 'GPL v3', 'BSD', 'Creative Commons', 'Proprietary', 'Other'] }
+        { id: 'license', label: 'License Type', type: 'select', placeholder: 'Select license type', options: ['MIT', 'Apache 2.0', 'GPL v3', 'BSD', 'Creative Commons', 'Proprietary', 'Other'] }
       ];
     }
 
@@ -616,12 +616,12 @@ export default function UploadDataPage() {
       return [
         { id: 'companyName', label: 'Company/Startup Name *', type: 'text', placeholder: 'Enter your company or startup name' },
         { id: 'position', label: 'Current Position/Role *', type: 'text', placeholder: 'CEO, CTO, Founder, Co-founder, etc.' },
-        { id: 'industry', label: 'Industry Focus *', type: 'select', options: ['Artificial Intelligence', 'Machine Learning', 'Data Science', 'Robotics', 'NLP/LLMs', 'Computer Vision', 'Healthcare AI', 'FinTech AI', 'EdTech AI', 'Enterprise AI', 'Consumer AI', 'Other'] },
-        { id: 'companyStage', label: 'Company Stage *', type: 'select', options: ['Idea Stage', 'Pre-Seed', 'Seed', 'Series A', 'Series B+', 'Established Company', 'Solo Founder'] },
-        { id: 'teamSize', label: 'Current Team Size *', type: 'select', options: ['Just me', '2-5 people', '6-15 people', '16-50 people', '51-100 people', '100+ people'] },
+        { id: 'industry', label: 'Industry Focus *', type: 'select', placeholder: 'Select industry focus', options: ['Artificial Intelligence', 'Machine Learning', 'Data Science', 'Robotics', 'NLP/LLMs', 'Computer Vision', 'Healthcare AI', 'FinTech AI', 'EdTech AI', 'Enterprise AI', 'Consumer AI', 'Other'] },
+        { id: 'companyStage', label: 'Company Stage *', type: 'select', placeholder: 'Select company stage', options: ['Idea Stage', 'Pre-Seed', 'Seed', 'Series A', 'Series B+', 'Established Company', 'Solo Founder'] },
+        { id: 'teamSize', label: 'Current Team Size *', type: 'select', placeholder: 'Select team size', options: ['Just me', '2-5 people', '6-15 people', '16-50 people', '51-100 people', '100+ people'] },
         { id: 'linkedinUrl', label: 'LinkedIn Profile *', type: 'url', placeholder: 'https://linkedin.com/in/yourprofile' },
         { id: 'companyWebsite', label: 'Company Website/Portfolio', type: 'url', placeholder: 'https://yourcompany.com' },
-        { id: 'yearsOfExperience', label: 'Years in AI/Tech *', type: 'select', options: ['Less than 1 year', '1-2 years', '3-5 years', '6-10 years', '11-15 years', '15+ years'] },
+        { id: 'yearsOfExperience', label: 'Years in AI/Tech *', type: 'select', placeholder: 'Select years of experience', options: ['Less than 1 year', '1-2 years', '3-5 years', '6-10 years', '11-15 years', '15+ years'] },
         { id: 'previousExits', label: 'Previous Exits/Acquisitions', type: 'textarea', placeholder: 'Describe any previous successful exits, acquisitions, or notable achievements' },
         { id: 'leadershipExp', label: 'Leadership Experience *', type: 'textarea', placeholder: 'Describe your leadership roles, team management experience, and key achievements' },
         { id: 'aiVision', label: 'AI Vision & Strategy *', type: 'textarea', placeholder: 'What is your vision for AI in your industry? How do you see AI evolving?' },
@@ -631,7 +631,7 @@ export default function UploadDataPage() {
         { id: 'thoughtLeadership', label: 'Thought Leadership Activities', type: 'textarea', placeholder: 'Speaking engagements, publications, podcasts, community involvement, etc.' },
         { id: 'whyAttend', label: 'Why do you want to attend? *', type: 'textarea', placeholder: 'What specific value are you hoping to gain from this founder event?' },
         { id: 'contribution', label: 'How will you contribute? *', type: 'textarea', placeholder: 'What expertise, connections, or value can you bring to other attendees?' },
-        { id: 'fundingStatus', label: 'Current Funding Status', type: 'select', options: ['Bootstrapped', 'Looking for Pre-Seed', 'Looking for Seed', 'Looking for Series A', 'Recently Funded', 'Not seeking funding'] }
+        { id: 'fundingStatus', label: 'Current Funding Status', type: 'select', placeholder: 'Select funding status', options: ['Bootstrapped', 'Looking for Pre-Seed', 'Looking for Seed', 'Looking for Series A', 'Recently Funded', 'Not seeking funding'] }
       ];
     }
 
@@ -640,7 +640,7 @@ export default function UploadDataPage() {
       return [
         { id: 'startupName', label: 'Startup Name *', type: 'text', placeholder: 'Enter your startup name' },
         { id: 'tagline', label: 'Company Tagline *', type: 'text', placeholder: 'One-line description of what you do' },
-        { id: 'industry', label: 'Industry Vertical *', type: 'select', options: ['Healthcare AI', 'FinTech AI', 'EdTech AI', 'Enterprise SaaS', 'Consumer AI', 'Robotics & Automation', 'Data & Analytics', 'Computer Vision', 'NLP & LLMs', 'Cybersecurity AI', 'Marketing AI', 'Other'] },
+        { id: 'industry', label: 'Industry Vertical *', type: 'select', placeholder: 'Select industry vertical', options: ['Healthcare AI', 'FinTech AI', 'EdTech AI', 'Enterprise SaaS', 'Consumer AI', 'Robotics & Automation', 'Data & Analytics', 'Computer Vision', 'NLP & LLMs', 'Cybersecurity AI', 'Marketing AI', 'Other'] },
         { id: 'website', label: 'Company Website', type: 'url', placeholder: 'https://yourstartup.com' },
         { id: 'pitchDeckUrl', label: 'Pitch Deck URL *', type: 'url', placeholder: 'Link to your pitch deck (Google Drive, Dropbox, etc.)' },
         { id: 'problemStatement', label: 'Problem Statement *', type: 'textarea', placeholder: 'What specific problem are you solving? Why is it important?' },
@@ -650,14 +650,14 @@ export default function UploadDataPage() {
         { id: 'customerSegment', label: 'Target Customer Segment *', type: 'textarea', placeholder: 'Who are your ideal customers? B2B/B2C? Company size, demographics, etc.' },
         { id: 'teamInfo', label: 'Founding Team *', type: 'textarea', placeholder: 'Introduce founders and key team members, their backgrounds and expertise' },
         { id: 'advisors', label: 'Key Advisors/Investors', type: 'textarea', placeholder: 'Notable advisors, investors, or board members' },
-        { id: 'productStage', label: 'Product Development Stage *', type: 'select', options: ['Concept/Wireframes', 'MVP/Prototype', 'Beta with Select Users', 'Public Beta', 'General Availability', 'Scaling & Growth'] },
+        { id: 'productStage', label: 'Product Development Stage *', type: 'select', placeholder: 'Select product stage', options: ['Concept/Wireframes', 'MVP/Prototype', 'Beta with Select Users', 'Public Beta', 'General Availability', 'Scaling & Growth'] },
         { id: 'traction', label: 'Traction Metrics *', type: 'textarea', placeholder: 'Users, revenue, partnerships, pilot customers, growth metrics - include numbers' },
         { id: 'revenueMetrics', label: 'Revenue & Financial Metrics', type: 'textarea', placeholder: 'MRR, ARR, customer acquisition cost, lifetime value, burn rate, runway' },
         { id: 'competitiveAdvantage', label: 'Competitive Advantage *', type: 'textarea', placeholder: 'What makes you different? IP, technology, team, market position, etc.' },
         { id: 'competitors', label: 'Key Competitors', type: 'textarea', placeholder: 'Who are your main competitors and how do you differentiate?' },
         { id: 'aiInnovation', label: 'AI Technology & Innovation *', type: 'textarea', placeholder: 'Describe your AI technology, models used, data strategy, technical differentiators' },
         { id: 'scalability', label: 'Scalability Strategy', type: 'textarea', placeholder: 'How will you scale the business and technology?' },
-        { id: 'fundingAsk', label: 'Funding Ask *', type: 'select', options: ['Not seeking funding', '$50K - $250K', '$250K - $500K', '$500K - $1M', '$1M - $2.5M', '$2.5M - $5M', '$5M - $10M', '$10M+'] },
+        { id: 'fundingAsk', label: 'Funding Ask *', type: 'select', placeholder: 'Select funding range', options: ['Not seeking funding', '$50K - $250K', '$250K - $500K', '$500K - $1M', '$1M - $2.5M', '$2.5M - $5M', '$5M - $10M', '$10M+'] },
         { id: 'useOfFunds', label: 'Use of Funds', type: 'textarea', placeholder: 'How will you use the funding? Hiring, product development, marketing, etc.' },
         { id: 'milestones', label: 'Key Milestones & Timeline', type: 'textarea', placeholder: 'What are your key milestones for the next 12-18 months?' },
         { id: 'risks', label: 'Key Risks & Mitigation', type: 'textarea', placeholder: 'What are the main risks to your business and how are you addressing them?' }
