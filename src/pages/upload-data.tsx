@@ -690,10 +690,16 @@ export default function UploadDataPage() {
           totalFiles: 500,
           timeRemaining: 'Complete!',
           stage: '🎉 Evaluation Complete!',
-          description: 'All applications have been successfully evaluated! View your results in the Grading Logs tab.'
+          description: 'All applications have been successfully evaluated! Redirecting to results...'
         });
         setUploadButtonText('Complete! View Results');
         setIsUploading(false);
+        
+        // Switch to Grading Logs tab after a short delay
+        setTimeout(() => {
+          setActiveTab('logs');
+          setShowGradingProgress(false);
+        }, 2000);
       }, 14000);
 
     } catch (error) {
@@ -1988,6 +1994,139 @@ export default function UploadDataPage() {
                             </CardContent>
                           </Card>
                         </div>
+
+                        {/* Evaluation Results Table */}
+                        <Card className="bg-white border-[0.6px] border-[rgba(0,0,0,0.4)]">
+                          <CardContent className="p-6">
+                            <h3 className="text-lg font-medium text-gray-700 mb-4">Evaluation Results</h3>
+                            <div className="overflow-x-auto">
+                              <table className="w-full border-collapse">
+                                <thead>
+                                  <tr className="border-b border-gray-200">
+                                    <th className="text-left p-3 text-sm font-medium text-gray-700">Criterion</th>
+                                    <th className="text-center p-3 text-sm font-medium text-gray-700">Weight</th>
+                                    <th className="text-center p-3 text-sm font-medium text-gray-700">Score</th>
+                                    <th className="text-left p-3 text-sm font-medium text-gray-700">Grade</th>
+                                    <th className="text-left p-3 text-sm font-medium text-gray-700">Feedback</th>
+                                    <th className="text-center p-3 text-sm font-medium text-gray-700">Actions</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  <tr className="border-b border-gray-100 hover:bg-gray-50">
+                                    <td className="p-3 text-sm text-gray-800 font-medium">Problem Relevance</td>
+                                    <td className="p-3 text-sm text-gray-600 text-center">20%</td>
+                                    <td className="p-3 text-center">
+                                      <span className="inline-block px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm font-medium">
+                                        5/5
+                                      </span>
+                                    </td>
+                                    <td className="p-3 text-sm text-gray-600">Exceptional</td>
+                                    <td className="p-3 text-sm text-gray-600 max-w-xs truncate">
+                                      The Gradix platform provides an exceptionally clear and significant solution...
+                                    </td>
+                                    <td className="p-3 text-center">
+                                      <button className="text-blue-600 hover:text-blue-800 text-sm">View Details</button>
+                                    </td>
+                                  </tr>
+                                  <tr className="border-b border-gray-100 hover:bg-gray-50">
+                                    <td className="p-3 text-sm text-gray-800 font-medium">Innovation & Creativity</td>
+                                    <td className="p-3 text-sm text-gray-600 text-center">20%</td>
+                                    <td className="p-3 text-center">
+                                      <span className="inline-block px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm font-medium">
+                                        5/5
+                                      </span>
+                                    </td>
+                                    <td className="p-3 text-sm text-gray-600">Exceptional</td>
+                                    <td className="p-3 text-sm text-gray-600 max-w-xs truncate">
+                                      Gradix AI demonstrates exceptional innovation and creativity by automating...
+                                    </td>
+                                    <td className="p-3 text-center">
+                                      <button className="text-blue-600 hover:text-blue-800 text-sm">View Details</button>
+                                    </td>
+                                  </tr>
+                                  <tr className="border-b border-gray-100 hover:bg-gray-50">
+                                    <td className="p-3 text-sm text-gray-800 font-medium">Technical Execution</td>
+                                    <td className="p-3 text-sm text-gray-600 text-center">25%</td>
+                                    <td className="p-3 text-center">
+                                      <span className="inline-block px-3 py-1 bg-yellow-100 text-yellow-800 rounded-full text-sm font-medium">
+                                        3/5
+                                      </span>
+                                    </td>
+                                    <td className="p-3 text-sm text-gray-600">Satisfactory</td>
+                                    <td className="p-3 text-sm text-gray-600 max-w-xs truncate">
+                                      The Gradix AI platform demonstrates satisfactory technical execution...
+                                    </td>
+                                    <td className="p-3 text-center">
+                                      <button className="text-blue-600 hover:text-blue-800 text-sm">View Details</button>
+                                    </td>
+                                  </tr>
+                                  <tr className="border-b border-gray-100 hover:bg-gray-50">
+                                    <td className="p-3 text-sm text-gray-800 font-medium">UX/UI</td>
+                                    <td className="p-3 text-sm text-gray-600 text-center">15%</td>
+                                    <td className="p-3 text-center">
+                                      <span className="inline-block px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-medium">
+                                        4/5
+                                      </span>
+                                    </td>
+                                    <td className="p-3 text-sm text-gray-600">Good</td>
+                                    <td className="p-3 text-sm text-gray-600 max-w-xs truncate">
+                                      The Gradix AI application demonstrates strong UX/UI design with a focus...
+                                    </td>
+                                    <td className="p-3 text-center">
+                                      <button className="text-blue-600 hover:text-blue-800 text-sm">View Details</button>
+                                    </td>
+                                  </tr>
+                                  <tr className="border-b border-gray-100 hover:bg-gray-50">
+                                    <td className="p-3 text-sm text-gray-800 font-medium">Business Viability</td>
+                                    <td className="p-3 text-sm text-gray-600 text-center">10%</td>
+                                    <td className="p-3 text-center">
+                                      <span className="inline-block px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm font-medium">
+                                        5/5
+                                      </span>
+                                    </td>
+                                    <td className="p-3 text-sm text-gray-600">Exemplary</td>
+                                    <td className="p-3 text-sm text-gray-600 max-w-xs truncate">
+                                      Gradix AI demonstrates exemplary business viability with outstanding...
+                                    </td>
+                                    <td className="p-3 text-center">
+                                      <button className="text-blue-600 hover:text-blue-800 text-sm">View Details</button>
+                                    </td>
+                                  </tr>
+                                  <tr className="border-b border-gray-100 hover:bg-gray-50">
+                                    <td className="p-3 text-sm text-gray-800 font-medium">Presentation</td>
+                                    <td className="p-3 text-sm text-gray-600 text-center">10%</td>
+                                    <td className="p-3 text-center">
+                                      <span className="inline-block px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-medium">
+                                        4/5
+                                      </span>
+                                    </td>
+                                    <td className="p-3 text-sm text-gray-600">Strong</td>
+                                    <td className="p-3 text-sm text-gray-600 max-w-xs truncate">
+                                      The presentation of the Gradix AI platform is strong, with a high-quality...
+                                    </td>
+                                    <td className="p-3 text-center">
+                                      <button className="text-blue-600 hover:text-blue-800 text-sm">View Details</button>
+                                    </td>
+                                  </tr>
+                                </tbody>
+                                <tfoot>
+                                  <tr className="bg-gray-50">
+                                    <td className="p-3 text-sm font-medium text-gray-800">Total Score</td>
+                                    <td className="p-3 text-sm font-medium text-gray-800 text-center">100%</td>
+                                    <td className="p-3 text-center">
+                                      <span className="inline-block px-4 py-1 bg-green-600 text-white rounded-full text-sm font-bold">
+                                        88/100
+                                      </span>
+                                    </td>
+                                    <td colSpan={3} className="p-3 text-sm font-medium text-gray-800">
+                                      Overall: Excellent Performance
+                                    </td>
+                                  </tr>
+                                </tfoot>
+                              </table>
+                            </div>
+                          </CardContent>
+                        </Card>
                       </div>
                     </TabsContent>
                   </Tabs>
