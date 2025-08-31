@@ -80,10 +80,48 @@ The final selection decision always remains with you.
 
 Created by [BlockSurvey](https://blocksurvey.io/) - Building tools that respect privacy while delivering powerful functionality.
 
-## Getting Started
+## 🚀 Setup Instructions
 
-First, run the development server:
+### Prerequisites
+- Node.js 16.x or higher
+- npm 8.x or higher (or yarn/pnpm)
+- Git
 
+### Installation Steps
+
+1. **Clone the repository**
+```bash
+git clone https://github.com/your-org/gradix.git
+cd gradix/ui/gradix-app
+```
+
+2. **Install dependencies**
+```bash
+npm install
+# or
+yarn install
+# or
+pnpm install
+```
+
+3. **Set up environment variables**
+```bash
+cp .env.example .env.local
+```
+
+Edit `.env.local` with your configuration:
+```env
+NEXT_PUBLIC_API_URL=your_api_endpoint
+NEXT_PUBLIC_APP_URL=http://localhost:3000
+# Add other required environment variables
+```
+
+4. **Run database migrations (if applicable)**
+```bash
+npm run migrate
+```
+
+5. **Start the development server**
 ```bash
 npm run dev
 # or
@@ -92,27 +130,266 @@ yarn dev
 pnpm dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+6. **Open the application**
+Navigate to [http://localhost:3000](http://localhost:3000) in your browser.
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+### Production Build
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+```bash
+# Build for production
+npm run build
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+# Start production server
+npm run start
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+### Testing
 
-## Learn More
+```bash
+# Run unit tests
+npm run test
 
-To learn more about Next.js, take a look at the following resources:
+# Run linting
+npm run lint
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+# Type checking
+npm run type-check
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+## 🏗️ Architecture Overview
 
-## Deploy on Vercel
+### Technology Stack
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- **Frontend Framework**: Next.js 13.1.6 (Pages Router)
+- **Language**: TypeScript 4.9.4
+- **Styling**: Tailwind CSS with custom configuration
+- **UI Components**: shadcn/ui (Radix UI + Tailwind)
+- **State Management**: Zustand
+- **Form Handling**: React Hook Form
+- **API Communication**: REST APIs with fetch/axios
+- **Authentication**: [Specify auth provider if applicable]
+- **Deployment**: Vercel/AWS/Other
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+### Project Structure
+
+```
+gradix-app/
+├── src/
+│   ├── pages/           # Next.js pages and API routes
+│   │   ├── api/         # Backend API endpoints
+│   │   └── *.tsx        # Frontend pages
+│   ├── components/      # React components
+│   │   └── ui/         # shadcn/ui components
+│   ├── stores/         # Zustand state management
+│   ├── lib/            # Utility functions and helpers
+│   ├── hooks/          # Custom React hooks
+│   ├── types/          # TypeScript type definitions
+│   └── styles/         # Global styles and Tailwind config
+├── public/             # Static assets
+├── tests/              # Test files
+└── config/             # Configuration files
+```
+
+### Key Design Patterns
+
+1. **Component Architecture**: Atomic design with reusable UI components
+2. **State Management**: Centralized state with Zustand stores
+3. **API Layer**: Abstracted API calls with service modules
+4. **Type Safety**: Comprehensive TypeScript coverage
+5. **Code Quality**: ESLint, Prettier, and Husky pre-commit hooks
+
+### Data Flow
+
+1. User interacts with UI components
+2. Components dispatch actions to Zustand stores
+3. Stores manage state and call API services
+4. API services communicate with backend endpoints
+5. Backend processes requests and returns responses
+6. UI updates based on state changes
+
+## 🤖 Models & Data Usage
+
+### AI Models
+
+**Primary Evaluation Model**
+- **Model**: GPT-4 / Claude 3 (specify actual model)
+- **Purpose**: Application evaluation, scoring, and justification generation
+- **License**: Commercial API usage under provider's terms
+- **Data Processing**: Text analysis, criteria matching, scoring algorithms
+
+**Document Processing**
+- **OCR/Text Extraction**: For PDF and image processing
+- **NLP Models**: For entity extraction and semantic analysis
+
+### Data Handling
+
+**Data Types Processed**:
+- Application forms (text)
+- Supporting documents (PDFs, images)
+- External URLs (web scraping)
+- Structured data (JSON, CSV)
+
+**Data Privacy**:
+- All data processing follows GDPR/CCPA compliance
+- No permanent storage of sensitive personal information
+- Encrypted data transmission (HTTPS/TLS)
+- User data deletion upon request
+
+**Third-Party Services**:
+- AI Model Provider (OpenAI/Anthropic/Other)
+- Cloud Storage (AWS S3/Google Cloud Storage)
+- Analytics (if applicable)
+- Authentication Provider
+
+### Licensing
+
+- **Application Code**: [Specify license - MIT/Apache/Proprietary]
+- **Dependencies**: See package.json for individual licenses
+- **AI Model Usage**: Subject to provider's commercial terms
+- **Data Processing**: Compliant with applicable data protection laws
+
+## ⚠️ Known Limitations & Risks
+
+### Technical Limitations
+
+1. **Scalability**
+   - Current architecture supports up to X concurrent evaluations
+   - API rate limits may affect bulk processing
+   - Large file uploads limited to XMB
+
+2. **Model Limitations**
+   - AI evaluations are probabilistic, not deterministic
+   - May exhibit bias present in training data
+   - Context window limitations for very long applications
+   - Cannot process certain file formats
+
+3. **Browser Compatibility**
+   - Optimized for modern browsers (Chrome, Firefox, Safari, Edge)
+   - Limited support for Internet Explorer
+   - Some features require JavaScript enabled
+
+### Operational Risks
+
+1. **Data Security**
+   - Dependency on third-party AI providers
+   - Potential for data breaches (mitigated by encryption)
+   - API key exposure risks
+
+2. **Compliance Risks**
+   - Must ensure compliance with local data protection laws
+   - AI decision-making regulations vary by jurisdiction
+   - Regular audits recommended for bias detection
+
+3. **Business Continuity**
+   - Dependency on external API services
+   - Need for fallback mechanisms during outages
+   - Regular backups required
+
+### Mitigation Strategies
+
+- Regular security audits and penetration testing
+- Bias detection and correction mechanisms
+- Human-in-the-loop validation for critical decisions
+- Comprehensive error handling and fallback systems
+- Regular model evaluation and retraining
+- Clear communication about AI involvement in decisions
+
+## 👥 Team & Contact Information
+
+### Core Development Team
+
+**Project Lead**
+- Name: [Team Lead Name]
+- Email: lead@gradix.ai
+- GitHub: @username
+
+**Engineering Team**
+- Frontend Lead: [Name] - frontend@gradix.ai
+- Backend Lead: [Name] - backend@gradix.ai
+- AI/ML Engineer: [Name] - ml@gradix.ai
+- DevOps Engineer: [Name] - devops@gradix.ai
+
+### Support Channels
+
+- **Technical Support**: support@gradix.ai
+- **Sales Inquiries**: sales@gradix.ai
+- **General Questions**: hello@gradix.ai
+- **Bug Reports**: Create an issue on [GitHub](https://github.com/your-org/gradix/issues)
+- **Feature Requests**: [Feature Request Form](link-to-form)
+
+### Community
+
+- **Documentation**: [https://docs.gradix.ai](https://docs.gradix.ai)
+- **Discord**: [Join our community](discord-link)
+- **Twitter**: [@gradix_ai](https://twitter.com/gradix_ai)
+- **LinkedIn**: [Gradix Company Page](linkedin-link)
+
+### Parent Organization
+
+**BlockSurvey**
+- Website: [https://blocksurvey.io](https://blocksurvey.io)
+- Email: contact@blocksurvey.io
+- Address: [Company Address]
+
+### Legal
+
+- **Terms of Service**: [https://gradix.ai/terms](https://gradix.ai/terms)
+- **Privacy Policy**: [https://gradix.ai/privacy](https://gradix.ai/privacy)
+- **Data Processing Agreement**: Available upon request
+
+---
+
+*Last updated: [Current Date]*
+*Version: 1.0.0*
+
+## 📚 Additional Resources
+
+### Development Resources
+- [Next.js Documentation](https://nextjs.org/docs)
+- [Tailwind CSS Documentation](https://tailwindcss.com/docs)
+- [shadcn/ui Components](https://ui.shadcn.com)
+- [Zustand Documentation](https://github.com/pmndrs/zustand)
+
+### Deployment
+
+**Vercel (Recommended)**
+```bash
+# Install Vercel CLI
+npm i -g vercel
+
+# Deploy
+vercel
+```
+
+**Docker**
+```bash
+# Build Docker image
+docker build -t gradix .
+
+# Run container
+docker run -p 3000:3000 gradix
+```
+
+**Other Platforms**
+- AWS Amplify
+- Netlify
+- Railway
+- Render
+
+## 🤝 Contributing
+
+We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details.
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+## 📄 License
+
+This project is licensed under the [License Type] - see the [LICENSE](LICENSE) file for details.
+
+---
+
+**Built with ❤️ by the Gradix Team**

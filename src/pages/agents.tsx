@@ -138,7 +138,7 @@ interface Agent {
 }
 
 // In-memory storage for agents
-let agentsStore: Agent[] = [];
+const agentsStore: Agent[] = [];
 
 // Function to add agent to store
 export const addAgent = (agent: Agent) => {

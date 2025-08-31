@@ -1635,7 +1635,7 @@ export default function UploadDataPage() {
                               onClick={handleCompleteSetup}
                               className="px-4 py-2 text-sm bg-black text-white hover:bg-gray-800"
                             >
-                              Complete Setup
+                              Start Grading
                             </Button>
                           </div>
                         </div>
