@@ -200,7 +200,7 @@ export default function PublicFormPage() {
             </div>
             <h2 className="text-xl font-medium text-gray-900 mb-2">Application Submitted!</h2>
             <p className="text-sm text-gray-600 mb-4">
-              Thank you for your application. We'll review your submission and get back to you soon.
+              Thank you for your application. We&apos;ll review your submission and get back to you soon.
             </p>
             <p className="text-xs text-gray-500">
               You should receive a confirmation email at {formData.email}

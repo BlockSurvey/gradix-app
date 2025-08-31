@@ -852,7 +852,7 @@ export default function AnalyticsPage() {
                           <div className="ml-6 space-y-2">
                             <div className="flex items-center justify-between border-l-2 border-gray-200 pl-4">
                               <span className="text-sm text-gray-700">
-                                10:30 AM Created 'Application Grader Pro'
+                                10:30 AM Created &apos;Application Grader Pro&apos;
                               </span>
                               <span className="text-sm text-gray-700">
                                 5.0 credits
@@ -860,7 +860,7 @@ export default function AnalyticsPage() {
                             </div>
                             <div className="flex items-center justify-between border-l-2 border-gray-200 pl-4">
                               <span className="text-sm text-gray-700">
-                                02:15 PM Created 'Code Review Assistant'
+                                02:15 PM Created &apos;Code Review Assistant&apos;
                               </span>
                               <span className="text-sm text-gray-700">
                                 5.0 credits
@@ -868,7 +868,7 @@ export default function AnalyticsPage() {
                             </div>
                             <div className="flex items-center justify-between border-l-2 border-gray-200 pl-4">
                               <span className="text-sm text-gray-700">
-                                04:45 PM Created 'Tech Grader'
+                                04:45 PM Created &apos;Tech Grader&apos;
                               </span>
                               <span className="text-sm text-gray-700">
                                 5.0 credits
